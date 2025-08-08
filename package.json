@@ -1,7 +1,7 @@
 {
-  "name": "react-simple-wysiwyg",
-  "version": "3.4.0",
-  "description": "Simple and lightweight React WYSIWYG editor",
+  "name": "@amboss-mededu/react-simple-wysiwyg",
+  "version": "3.4.2",
+  "description": "Simple and lightweight React WYSIWYG editor with special characters support",
   "main": "lib/index.cjs.js",
   "module": "lib/index.es.mjs",
   "unpkg": "lib/index.umd.min.js",
@@ -18,7 +18,7 @@
     "test:e2e": "npm test --prefix e2e/cra",
     "test:full": "npm run test && npm run test:e2e"
   },
-  "repository": "megahertz/react-simple-wysiwyg",
+  "repository": "amboss-mededu/react-simple-wysiwyg",
   "files": [
     "lib"
   ],
@@ -30,8 +30,8 @@
   ],
   "author": "Alexey Prokhorov",
   "license": "MIT",
-  "bugs": "https://github.com/megahertz/react-simple-wysiwyg/issues",
-  "homepage": "https://github.com/megahertz/react-simple-wysiwyg#readme",
+  "bugs": "https://github.com/amboss-mededu/react-simple-wysiwyg/issues",
+  "homepage": "https://github.com/amboss-mededu/react-simple-wysiwyg#readme",
   "devDependencies": {
     "@rollup/plugin-replace": "^6.0.2",
     "@rollup/plugin-terser": "^0.4.4",
