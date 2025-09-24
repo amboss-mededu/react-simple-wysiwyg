@@ -13,6 +13,8 @@ import {
   replaceCaret,
   setForwardRef,
 } from '../utils';
+import { htmlToContent } from '../utils/htmlToContent';
+import { ContentRoot } from '../types/content';
 
 /**
  * Based on https://github.com/lovasoa/react-contenteditable
@@ -65,6 +67,7 @@ export const ContentEditable = React.memo(
             target: {
               value: elementHtml,
               name: rest.name,
+              structured: htmlToContent(elementHtml),
             } as any,
           });
         }
@@ -95,7 +98,7 @@ export const ContentEditable = React.memo(
 );
 
 export type ContentEditableEvent = SyntheticEvent<any, Event> & {
-  target: { name?: string; value: string };
+  target: { name?: string; value: string; structured?: ContentRoot };
 };
 
 export interface ContentEditableProps extends HTMLAttributes<HTMLElement> {
