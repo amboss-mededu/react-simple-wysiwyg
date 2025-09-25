@@ -14,17 +14,9 @@ export function htmlToContent(html: string | undefined): ContentRoot {
     };
   }
 
-  // Decode HTML entities
-  const decoded = html
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'");
-
   // Create a temporary div to parse HTML
   const parser = new DOMParser();
-  const doc = parser.parseFromString(decoded, 'text/html');
+  const doc = parser.parseFromString(html, 'text/html');
   const body = doc.body;
 
   const blocks: ContentBlock[] = [];

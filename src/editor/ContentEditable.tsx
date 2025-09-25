@@ -19,8 +19,7 @@ import {
   getCurrentListItem,
   indentListItem,
   outdentListItem,
-  saveSelection,
-  restoreSelection,
+  withPreservedSelection,
 } from '../utils/listCommands';
 
 /**
@@ -90,17 +89,13 @@ export const ContentEditable = React.memo(
           if (listItem) {
             e.preventDefault();
 
-            const selection = saveSelection();
-            const success = e.shiftKey
-              ? outdentListItem(listItem)
-              : indentListItem(listItem);
-
-            if (success) {
-              // Trigger onChange after DOM manipulation
-              onChange(e);
-              // Restore cursor position
-              setTimeout(() => restoreSelection(selection), 0);
-            }
+            withPreservedSelection(
+              () =>
+                e.shiftKey
+                  ? outdentListItem(listItem)
+                  : indentListItem(listItem),
+              () => onChange(e),
+            );
             return;
           }
         }
@@ -122,23 +117,25 @@ export const ContentEditable = React.memo(
 
               if (isNested) {
                 // For nested lists, outdent the empty item
-                saveSelection();
-                if (outdentListItem(listItem)) {
-                  // Trigger onChange
-                  onChange(e);
-
-                  // Set cursor to the end of the outdented item
-                  setTimeout(() => {
-                    const selection = window.getSelection();
-                    if (selection && listItem.parentNode) {
-                      const range = document.createRange();
-                      range.selectNodeContents(listItem);
-                      range.collapse(false);
-                      selection.removeAllRanges();
-                      selection.addRange(range);
-                    }
-                  }, 0);
-
+                if (
+                  withPreservedSelection(
+                    () => outdentListItem(listItem),
+                    () => {
+                      onChange(e);
+                      // Set cursor to the end of the outdented item
+                      setTimeout(() => {
+                        const selection = window.getSelection();
+                        if (selection && listItem.parentNode) {
+                          const range = document.createRange();
+                          range.selectNodeContents(listItem);
+                          range.collapse(false);
+                          selection.removeAllRanges();
+                          selection.addRange(range);
+                        }
+                      }, 0);
+                    },
+                  )
+                ) {
                   return;
                 }
               } else {
@@ -188,11 +185,15 @@ export const ContentEditable = React.memo(
             selection?.focusOffset === 0 &&
             listItem.textContent?.trim() !== ''
           ) {
-            const savedSelection = saveSelection();
-            if (outdentListItem(listItem)) {
-              e.preventDefault();
-              onChange(e);
-              setTimeout(() => restoreSelection(savedSelection), 0);
+            if (
+              withPreservedSelection(
+                () => outdentListItem(listItem),
+                () => {
+                  e.preventDefault();
+                  onChange(e);
+                },
+              )
+            ) {
               return;
             }
           }

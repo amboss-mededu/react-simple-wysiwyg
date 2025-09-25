@@ -162,3 +162,20 @@ export function restoreSelection(saved: { node: Node; offset: number } | null) {
     // Node might have been removed or changed, ignore
   }
 }
+
+/**
+ * Execute an action with selection preservation
+ * Useful for DOM manipulations that need to maintain cursor position
+ */
+export function withPreservedSelection(
+  action: () => boolean,
+  onSuccess: () => void,
+): boolean {
+  const selection = saveSelection();
+  if (action()) {
+    onSuccess();
+    setTimeout(() => restoreSelection(selection), 0);
+    return true;
+  }
+  return false;
+}

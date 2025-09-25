@@ -11,7 +11,7 @@ Simple and lightweight React WYSIWYG editor. [Demo](https://megahertz.github.io/
 
 Key features:
 
-- pretty small (~9kb, ~4kb gzipped)
+- pretty small (~6kb gzipped)
 - fast
 - simple to configure
 - simple to extend
@@ -56,6 +56,29 @@ and so on.
       );
     }
     ```
+    
+### Using the Basic (Lightweight) Version
+
+If you don't need advanced features like special characters, structured content, or complex list handling, you can use the basic version to save ~2KB:
+
+```jsx
+import { useState } from 'react';
+import BasicEditor from '@amboss-mededu/react-simple-wysiwyg/basic';
+
+function App() {
+  const [html, setHtml] = useState('my <b>HTML</b>');
+  
+  return (
+    <BasicEditor value={html} onChange={e => setHtml(e.target.value)} />
+  );
+}
+```
+
+The basic version excludes:
+- Special characters modal
+- List buttons (numbered/bulleted lists)
+- Structured content parsing (`e.target.structured`)
+- Advanced list keyboard shortcuts (Tab indentation, Enter/Backspace handling)
     
 ### Component Props
 

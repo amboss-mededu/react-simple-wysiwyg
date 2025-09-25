@@ -14,10 +14,6 @@ export default [
       {
         file: packageJson.module,
         format: 'es',
-        plugins: [replace({
-          //'React.createElement': 'createElement',
-          // 'import React, { ': 'import { ',
-        })],
         sourcemap: true,
         exports: 'named',
         interop: 'defaultOnly'
