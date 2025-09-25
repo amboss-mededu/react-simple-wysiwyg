@@ -28,6 +28,59 @@
   pointer-events: none;
 }
 
+/* Nested list styles */
+.rsw-ce ul,
+.rsw-ce ol {
+  padding-left: 2em;
+  margin: 0.5em 0;
+}
+
+/* First level lists */
+.rsw-ce > ul,
+.rsw-ce > ol,
+.rsw-ce > div > ul,
+.rsw-ce > div > ol {
+  padding-left: 2em;
+}
+
+/* Nested lists (second level) */
+.rsw-ce li > ul,
+.rsw-ce li > ol {
+  padding-left: 2em;
+  margin: 0.25em 0;
+}
+
+/* List item spacing */
+.rsw-ce li {
+  margin: 0.25em 0;
+}
+
+/* Different bullet styles for nested levels */
+.rsw-ce ul {
+  list-style-type: disc;
+}
+
+.rsw-ce ul ul {
+  list-style-type: circle;
+}
+
+.rsw-ce ul ul ul {
+  list-style-type: square;
+}
+
+/* Different numbering for nested ordered lists */
+.rsw-ce ol {
+  list-style-type: decimal;
+}
+
+.rsw-ce ol ol {
+  list-style-type: lower-alpha;
+}
+
+.rsw-ce ol ol ol {
+  list-style-type: lower-roman;
+}
+
 .rsw-html {
   background: transparent;
   border: none;

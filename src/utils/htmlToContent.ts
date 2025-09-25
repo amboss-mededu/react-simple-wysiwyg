@@ -1,4 +1,10 @@
-import { ContentBlock, ContentRoot } from '../types/content';
+import {
+  ContentBlock,
+  ContentRoot,
+  ListItem,
+  OrderedListContent,
+  UnorderedListContent,
+} from '../types/content';
 
 export function htmlToContent(html: string | undefined): ContentRoot {
   if (!html || typeof html !== 'string') {
@@ -8,17 +14,9 @@ export function htmlToContent(html: string | undefined): ContentRoot {
     };
   }
 
-  // Decode HTML entities
-  const decoded = html
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'");
-
   // Create a temporary div to parse HTML
   const parser = new DOMParser();
-  const doc = parser.parseFromString(decoded, 'text/html');
+  const doc = parser.parseFromString(html, 'text/html');
   const body = doc.body;
 
   const blocks: ContentBlock[] = [];
@@ -60,6 +58,59 @@ export function htmlToContent(html: string | undefined): ContentRoot {
     return '';
   };
 
+  const processListItems = (listElement: Element): ListItem[] => {
+    const items: ListItem[] = [];
+
+    // Only direct children <li> elements
+    const liElements = Array.from(listElement.children).filter(
+      (child) => child.tagName.toLowerCase() === 'li',
+    );
+
+    liElements.forEach((li) => {
+      let textContent = '';
+      const nestedLists: Array<ContentBlock> = [];
+
+      // Process each child node of the <li>
+      Array.from(li.childNodes).forEach((node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          textContent += node.textContent || '';
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          const element = node as Element;
+          const tagName = element.tagName.toLowerCase();
+
+          if (tagName === 'ul' || tagName === 'ol') {
+            const nestedItems = processListItems(element);
+            if (nestedItems.length > 0) {
+              nestedLists.push({
+                type: tagName === 'ul' ? 'unordered-list' : 'ordered-list',
+                items: nestedItems,
+              });
+            }
+          } else {
+            // Extract text from other elements
+            textContent += extractTextWithTags(element);
+          }
+        }
+      });
+
+      const item: ListItem = {
+        type: 'list-item',
+        value: textContent.trim(),
+      };
+
+      // Add nested lists if any
+      if (nestedLists.length > 0) {
+        item.children = nestedLists as Array<
+          UnorderedListContent | OrderedListContent
+        >;
+      }
+
+      items.push(item);
+    });
+
+    return items;
+  };
+
   // Helper to process nodes recursively
   const processNode = (node: Node) => {
     if (node.nodeType === Node.TEXT_NODE) {
@@ -74,10 +125,7 @@ export function htmlToContent(html: string | undefined): ContentRoot {
       if (tagName === 'ul') {
         // Process unordered list
         flushText();
-        const items = Array.from(element.querySelectorAll('li')).map((li) => ({
-          type: 'list-item' as const,
-          value: extractTextWithTags(li).trim(),
-        }));
+        const items = processListItems(element);
         if (items.length > 0) {
           blocks.push({
             type: 'unordered-list',
@@ -87,10 +135,7 @@ export function htmlToContent(html: string | undefined): ContentRoot {
       } else if (tagName === 'ol') {
         // Process ordered list
         flushText();
-        const items = Array.from(element.querySelectorAll('li')).map((li) => ({
-          type: 'list-item' as const,
-          value: extractTextWithTags(li).trim(),
-        }));
+        const items = processListItems(element);
         if (items.length > 0) {
           blocks.push({
             type: 'ordered-list',

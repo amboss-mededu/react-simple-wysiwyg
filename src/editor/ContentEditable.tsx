@@ -15,6 +15,12 @@ import {
 } from '../utils';
 import { htmlToContent } from '../utils/htmlToContent';
 import { ContentRoot } from '../types/content';
+import {
+  getCurrentListItem,
+  indentListItem,
+  outdentListItem,
+  withPreservedSelection,
+} from '../utils/listCommands';
 
 /**
  * Based on https://github.com/lovasoa/react-contenteditable
@@ -76,6 +82,127 @@ export const ContentEditable = React.memo(
         htmlRef.current = elementHtml;
       }
 
+      function handleKeyDown(e: KeyboardEvent<HTMLElement>) {
+        // Handle Tab/Shift+Tab for list indentation
+        if (e.key === 'Tab') {
+          const listItem = getCurrentListItem();
+          if (listItem) {
+            e.preventDefault();
+
+            withPreservedSelection(
+              () =>
+                e.shiftKey
+                  ? outdentListItem(listItem)
+                  : indentListItem(listItem),
+              () => onChange(e),
+            );
+            return;
+          }
+        }
+
+        // Handle Enter on empty list item
+        if (e.key === 'Enter') {
+          const listItem = getCurrentListItem();
+          if (listItem && listItem.textContent?.trim() === '') {
+            const parent = listItem.parentElement;
+            if (
+              parent &&
+              (parent.tagName === 'UL' || parent.tagName === 'OL')
+            ) {
+              e.preventDefault();
+
+              // Check if this is a nested list
+              const grandParent = parent.parentElement;
+              const isNested = grandParent && grandParent.tagName === 'LI';
+
+              if (isNested) {
+                // For nested lists, outdent the empty item
+                if (
+                  withPreservedSelection(
+                    () => outdentListItem(listItem),
+                    () => {
+                      onChange(e);
+                      // Set cursor to the end of the outdented item
+                      setTimeout(() => {
+                        const selection = window.getSelection();
+                        if (selection && listItem.parentNode) {
+                          const range = document.createRange();
+                          range.selectNodeContents(listItem);
+                          range.collapse(false);
+                          selection.removeAllRanges();
+                          selection.addRange(range);
+                        }
+                      }, 0);
+                    },
+                  )
+                ) {
+                  return;
+                }
+              } else {
+                // For top-level lists, exit the list by creating a new line after it
+                const listContainer = parent.parentElement; // Should be the div wrapper
+                const newDiv = document.createElement('div');
+                newDiv.innerHTML = '<br>';
+
+                // Insert the new div after the list's container
+                if (listContainer && listContainer.tagName === 'DIV') {
+                  listContainer.insertAdjacentElement('afterend', newDiv);
+                } else {
+                  parent.insertAdjacentElement('afterend', newDiv);
+                }
+
+                listItem.remove();
+
+                if (parent.children.length === 0) {
+                  parent.remove();
+                }
+
+                // Place cursor in the new div
+                const range = document.createRange();
+                const selection = window.getSelection();
+                if (selection) {
+                  range.selectNodeContents(newDiv);
+                  range.collapse(false);
+                  selection.removeAllRanges();
+                  selection.addRange(range);
+                }
+
+                // Trigger onChange
+                onChange(e);
+                return;
+              }
+            }
+          }
+        }
+
+        // Handle Backspace on empty list item for outdenting
+        if (e.key === 'Backspace') {
+          const listItem = getCurrentListItem();
+          const selection = window.getSelection();
+          if (
+            listItem &&
+            selection?.anchorOffset === 0 &&
+            selection?.focusOffset === 0 &&
+            listItem.textContent?.trim() !== ''
+          ) {
+            if (
+              withPreservedSelection(
+                () => outdentListItem(listItem),
+                () => {
+                  e.preventDefault();
+                  onChange(e);
+                },
+              )
+            ) {
+              return;
+            }
+          }
+        }
+
+        // Call original handler or onChange
+        (restRef.current.onKeyDown || onChange)(e);
+      }
+
       const cssClass = cls('rsw-ce', className);
       return React.createElement(tagName || 'div', {
         ...rest,
@@ -85,8 +212,7 @@ export const ContentEditable = React.memo(
         onBlur: (e: FocusEvent<HTMLElement>) =>
           (restRef.current.onBlur || onChange)(e),
         onInput: onChange,
-        onKeyDown: (e: KeyboardEvent<HTMLElement>) =>
-          (restRef.current.onKeyDown || onChange)(e),
+        onKeyDown: handleKeyDown,
         onKeyUp: (e: KeyboardEvent<HTMLElement>) =>
           (restRef.current.onKeyUp || onChange)(e),
         placeholder,

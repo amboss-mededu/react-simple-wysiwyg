@@ -5,7 +5,10 @@ export type TextContent = {
 
 export type ListItem = {
   type: 'list-item';
-  value: string; // Text content of the list item, supports <b>, <i>, <sub>, <sup>
+  /* Text content of the list item, supports <b>, <i>, <sub>, <sup> */
+  value: string;
+  /* Optional nested lists under this item */
+  children?: Array<UnorderedListContent | OrderedListContent>;
 };
 
 export type UnorderedListContent = {
