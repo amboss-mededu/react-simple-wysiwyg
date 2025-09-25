@@ -12,6 +12,7 @@ module.exports = {
   },
   devServer: {
     hot: true,
+    port: 9000,
     static: {
       directory: __dirname,
     },
