@@ -20,6 +20,10 @@
     "test:full": "npm run test && npm run test:e2e"
   },
   "repository": "amboss-mededu/react-simple-wysiwyg",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/",
+    "access": "restricted"
+  },
   "files": [
     "lib"
   ],
