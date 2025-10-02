@@ -17,7 +17,8 @@
   outline: 1px solid #668;
 }
 
-.rsw-ce sup, .rsw-ce sub {
+.rsw-ce sup,
+.rsw-ce sub {
   font-size: 0.75em;
   line-height: 0;
 }
@@ -129,7 +130,7 @@
 .rsw-click-disabler {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.3);
+  background: rgba(0, 0, 0, 0.3);
   z-index: 999;
 }
 

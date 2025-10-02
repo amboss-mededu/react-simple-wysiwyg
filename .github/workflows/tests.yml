@@ -10,22 +10,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 22
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
-    - run: npm install
-    - run: npm ci --prefix e2e/cra
+      - run: npm install
+      - run: npm ci --prefix e2e/cra
 
-    - run: npm test
+      - run: npm test
 
-    - run: npx --prefix e2e/cra playwright install chromium --with-deps
-    - run: npm run test:e2e
+      - run: npx --prefix e2e/cra playwright install chromium --with-deps
+      - run: npm run test:e2e
 
-    - uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: playwright-report
-        path: e2e/cra/playwright-report/
-        retention-days: 30
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: e2e/cra/playwright-report/
+          retention-days: 30

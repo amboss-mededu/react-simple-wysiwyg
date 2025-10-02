@@ -21,7 +21,7 @@ module.exports = {
 
   settings: {
     'import/core-modules': ['react', 'react-dom'],
-    'react': { version: 'detect' },
+    react: { version: 'detect' },
   },
 
   rules: {

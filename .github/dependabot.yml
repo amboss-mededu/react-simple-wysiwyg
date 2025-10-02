@@ -1,8 +1,8 @@
 version: 2
 updates:
-  - package-ecosystem: "npm"
-    directory: "/examples/typescript"
+  - package-ecosystem: 'npm'
+    directory: '/examples/typescript'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
     ignore:
-      - dependency-name: "*"
+      - dependency-name: '*'

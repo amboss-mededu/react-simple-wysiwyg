@@ -16,7 +16,7 @@ export default [
         format: 'es',
         sourcemap: true,
         exports: 'named',
-        interop: 'defaultOnly'
+        interop: 'defaultOnly',
       },
       {
         file: packageJson.main,
@@ -29,7 +29,7 @@ export default [
         format: 'umd',
         name: 'ReactSimpleWysiwyg',
         plugins: [terser()],
-        globals: { 'react': 'React' },
+        globals: { react: 'React' },
         sourcemap: true,
         exports: 'named',
       },
