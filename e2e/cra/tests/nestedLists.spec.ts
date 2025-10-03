@@ -11,7 +11,7 @@ test('creates nested lists with Tab key', async ({ page }) => {
 
   // Click in the editor and create a list
   await editor.click();
-  await page.click('button[title="Unordered list"]');
+  await page.click('button[title="Bullet list"]');
 
   // Type first item
   await editor.type('First item');
@@ -60,13 +60,13 @@ test('creates mixed nested lists (ul and ol)', async ({ page }) => {
 
   // Create unordered list
   await editor.click();
-  await page.click('button[title="Unordered list"]');
+  await page.click('button[title="Bullet list"]');
 
   await editor.type('Bullet item');
   await page.keyboard.press('Enter');
 
   // Change to ordered list and indent
-  await page.click('button[title="Ordered list"]');
+  await page.click('button[title="Numbered list"]');
   await page.keyboard.press('Tab');
   await editor.type('Numbered sub-item 1');
 
@@ -76,7 +76,7 @@ test('creates mixed nested lists (ul and ol)', async ({ page }) => {
   // Outdent and add another bullet item
   await page.keyboard.press('Enter');
   await page.keyboard.press('Shift+Tab');
-  await page.click('button[title="Unordered list"]');
+  await page.click('button[title="Bullet list"]');
   await editor.type('Another bullet item');
 
   await editor.blur();
@@ -103,7 +103,7 @@ test('exits nested list with Enter on empty item', async ({ page }) => {
 
   // Create nested list
   await editor.click();
-  await page.click('button[title="Unordered list"]');
+  await page.click('button[title="Bullet list"]');
 
   await editor.type('First item');
   await page.keyboard.press('Enter');
@@ -142,7 +142,7 @@ test('exits list completely with Enter on empty top-level item', async ({
   await editor.waitFor();
 
   await editor.click();
-  await page.click('button[title="Unordered list"]');
+  await page.click('button[title="Bullet list"]');
 
   await editor.type('List item');
   await page.keyboard.press('Enter');
@@ -175,7 +175,7 @@ test('handles Shift+Tab outdenting correctly', async ({ page }) => {
   await editor.waitFor();
 
   await editor.click();
-  await page.click('button[title="Unordered list"]');
+  await page.click('button[title="Bullet list"]');
 
   // Create deeply nested structure
   await editor.type('Level 1');
@@ -268,7 +268,7 @@ test('respects maximum nesting depth of 2 levels', async ({ page }) => {
   await editor.waitFor();
 
   await editor.click();
-  await page.click('button[title="Unordered list"]');
+  await page.click('button[title="Bullet list"]');
 
   await editor.type('Level 1');
   await page.keyboard.press('Enter');
