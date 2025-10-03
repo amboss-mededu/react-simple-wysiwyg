@@ -20,7 +20,7 @@
     ]
   },
   "dependencies": {
-    "@amboss-mededu/react-simple-wysiwyg": "^3.4.1",
+    "@amboss-mededu/react-simple-wysiwyg": "^3.5.0",
     "playwright": "^1.39.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
