@@ -55,7 +55,7 @@ export function getCurrentListItem(): HTMLLIElement | null {
 export function canIndent(listItem: HTMLLIElement): boolean {
   // Check if we're at max depth (2 levels of nesting)
   const depth = getListItemDepth(listItem);
-  if (depth >= 2) return false;
+  if (depth >= 1) return false;
 
   // Check if there's a previous sibling to nest under
   const prevSibling = listItem.previousElementSibling;

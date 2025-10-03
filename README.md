@@ -1,4 +1,5 @@
 # react-simple-wysiwyg
+
 [![Tests](https://github.com/megahertz/react-simple-wysiwyg/actions/workflows/tests.yml/badge.svg)](https://github.com/megahertz/react-simple-wysiwyg/actions/workflows/tests.yml)
 [![NPM version](https://badge.fury.io/js/react-simple-wysiwyg.svg)](https://badge.fury.io/js/react-simple-wysiwyg)
 [![npm bundle size](https://img.shields.io/bundlephobia/minzip/react-simple-wysiwyg.svg?color=rgb%2868%2C%20204%2C%2017%29)](https://bundlephobia.com/result?p=react-simple-wysiwyg)
@@ -24,39 +25,37 @@ Of course, it's not so powerful as other complex editors. It DOES NOT:
 - ✗ contain advanced features as others (like table editor, image editor and so on)
 - ✗ support old browsers (IE 11 is minimal)
 
-If you need a more powerful solution for React, you'd better take a look at more 
-powerful editors like Slate.js, Tiptap, CKEditor, TinyMCE, Quill or Summernote 
+If you need a more powerful solution for React, you'd better take a look at more
+powerful editors like Slate.js, Tiptap, CKEditor, TinyMCE, Quill or Summernote
 and so on.
 
 ## Usage
 
- 1. Install with [npm](https://npmjs.org/package/react-simple-wysiwyg):
+1.  Install with [npm](https://npmjs.org/package/react-simple-wysiwyg):
 
     `npm install react-simple-wysiwyg`
-    
+
     or [CDN (unpkg.com)](https://unpkg.com/react-simple-wysiwyg/)
-   
+
     `<script src="//unpkg.com/react-simple-wysiwyg"></script>`
-    
- 2. Use the component
- 
+
+2.  Use the component
+
     ```jsx
     import { useState } from 'react';
     import Editor from 'react-simple-wysiwyg';
-    
+
     function App() {
       const [html, setHtml] = useState('my <b>HTML</b>');
-      
+
       function onChange(e) {
         setHtml(e.target.value);
       }
-    
-      return (
-        <Editor value={html} onChange={onChange} />
-      );
+
+      return <Editor value={html} onChange={onChange} />;
     }
     ```
-    
+
 ### Using the Basic (Lightweight) Version
 
 If you don't need advanced features like special characters, structured content, or complex list handling, you can use the basic version to save ~2KB:
@@ -67,23 +66,22 @@ import BasicEditor from '@amboss-mededu/react-simple-wysiwyg/basic';
 
 function App() {
   const [html, setHtml] = useState('my <b>HTML</b>');
-  
-  return (
-    <BasicEditor value={html} onChange={e => setHtml(e.target.value)} />
-  );
+
+  return <BasicEditor value={html} onChange={(e) => setHtml(e.target.value)} />;
 }
 ```
 
 The basic version excludes:
+
 - Special characters modal
 - List buttons (numbered/bulleted lists)
 - Structured content parsing (`e.target.structured`)
 - Advanced list keyboard shortcuts (Tab indentation, Enter/Backspace handling)
-    
+
 ### Component Props
 
-Generally, all props as well as a ref are passed to the content editable 
-element, which is a div element. It also supports a few additional properties 
+Generally, all props as well as a ref are passed to the content editable
+element, which is a div element. It also supports a few additional properties
 to act like an input element:
 
 - **autoFocus**
@@ -99,11 +97,7 @@ You can also set the root container props using `containerProps` property.
 
 ```tsx
 import { useState } from 'react';
-import Editor, { 
-  BtnBold,
-  BtnItalic,
-  Toolbar
-} from 'react-simple-wysiwyg';
+import Editor, { BtnBold, BtnItalic, Toolbar } from 'react-simple-wysiwyg';
 
 export default function CustomEditor() {
   const [value, setValue] = useState('simple text');
@@ -128,7 +122,7 @@ Check [DefaultEditor.tsx](src/editor/DefaultEditor.tsx) for details.
 ### Custom buttons
 
 This library contains only a basic set of buttons, but it can be extended
-easily. Check [buttons.ts](src/toolbar/buttons.tsx) and 
+easily. Check [buttons.ts](src/toolbar/buttons.tsx) and
 [dropdowns.ts](src/toolbar/dropdowns.tsx) for example. Most of the buttons use
 [document.execCommand](https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand).
 You can find a list of all available commands there. This API is deprecated,
@@ -136,12 +130,12 @@ but there is still no alternative and there are no plans to remove it from
 browsers. Most of the popular WYSIWYG editors continue using it.
 
 ```tsx
-import Editor, { 
-  BtnBold, 
-  BtnItalic, 
+import Editor, {
+  BtnBold,
+  BtnItalic,
   createButton,
-  EditorProvider, 
-  Toolbar
+  EditorProvider,
+  Toolbar,
 } from 'react-simple-wysiwyg';
 
 const BtnAlignCenter = createButton('Align center', '≡', 'justifyCenter');
@@ -169,7 +163,7 @@ Also, you can pass `containerProps` to customize editor appearance. Here's an
 example how make the editor resizable:
 
 ```tsx
-<Editor 
+<Editor
   containerProps={{ style: { resize: 'vertical' } }}
   value={html}
   onChange={onChange}
@@ -184,7 +178,7 @@ All css classes are consistent, so feel free to use these names in your css:
   - `rsw-btn`
   - `rsw-separator`
   - `rsw-dd` (drop down list)
-  
+
 ## Troubleshooting
 
 ### Style issues: no list item bullets, wrong link styles and so on
@@ -193,9 +187,9 @@ All css classes are consistent, so feel free to use these names in your css:
 [#44](https://github.com/megahertz/react-simple-wysiwyg/issues/44),
 [#45](https://github.com/megahertz/react-simple-wysiwyg/issues/45)
 
-RSW editor doesn't isolate its styles from the parent styles. 
+RSW editor doesn't isolate its styles from the parent styles.
 It's a pretty common case when you use a global reset or normalize styles which
-remove bullets or numbers for lists. 
+remove bullets or numbers for lists.
 To fix that, you should redefine these styles again:
 
 ```css
@@ -210,13 +204,13 @@ To fix that, you should redefine these styles again:
 }
 ```
 
-### Insert a link which target="_blank"
+### Insert a link which target="\_blank"
 
 [#55](https://github.com/megahertz/react-simple-wysiwyg/issues/55). Also, it's a
 good example of inserting a custom HTML element.
 
 ## Credits
 
- - Based on 
-   [lovasoa/react-contenteditable](https://github.com/lovasoa/react-contenteditable)
- - Uses [Material Design Icons](http://materialdesignicons.com/)
+- Based on
+  [lovasoa/react-contenteditable](https://github.com/lovasoa/react-contenteditable)
+- Uses [Material Design Icons](http://materialdesignicons.com/)

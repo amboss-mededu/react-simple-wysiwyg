@@ -1,79 +1,83 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>react-simple-wysiwyg</title>
-  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="UTF-8" />
+    <title>react-simple-wysiwyg</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <style>
-    body {
-      color: #444;
-      max-width: 500px;
-      margin: 15px auto 5px;
-      padding: 5px;
-    }
+    <style>
+      body {
+        color: #444;
+        max-width: 500px;
+        margin: 15px auto 5px;
+        padding: 5px;
+      }
 
-    h1, h2 {
-      font-family: Arial,"Helvetica Neue",Helvetica,sans-serif;
-      font-weight: normal;
-    }
+      h1,
+      h2 {
+        font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+        font-weight: normal;
+      }
 
-    h1 {
-      margin: 10px 0 20px;
-    }
+      h1 {
+        margin: 10px 0 20px;
+      }
 
-    h2 {
-      font-size: 16px;
-      margin: 10px 0 0;
-    }
+      h2 {
+        font-size: 16px;
+        margin: 10px 0 0;
+      }
 
-    textarea {
-      border: 1px solid rgb(221, 221, 221);
-      border-radius: 3px;
-      box-sizing: border-box;
-      display: block;
-      min-height: 100px;
-      width: 100%;
-    }
-  </style>
-</head>
-<body>
-  <h1>react-simple-wysiwyg example</h1>
+      textarea {
+        border: 1px solid rgb(221, 221, 221);
+        border-radius: 3px;
+        box-sizing: border-box;
+        display: block;
+        min-height: 100px;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>react-simple-wysiwyg example</h1>
 
-  <div id="root">◌ Loading…</div>
-  <script crossorigin src="//polyfill.io/v3/polyfill.min.js?features=es2015"></script>
-  <script src="//unpkg.com/react@17.0.1/umd/react.production.min.js"></script>
-  <script src="//unpkg.com/react-dom@17.0.1/umd/react-dom.production.min.js"></script>
-  <script src="//unpkg.com/react-simple-wysiwyg@latest"></script>
-  <script>
-    function App() {
-      var statePair = React.useState('');
-      var value = statePair[0];
-      var setValue = statePair[1];
+    <div id="root">◌ Loading…</div>
+    <script
+      crossorigin
+      src="//polyfill.io/v3/polyfill.min.js?features=es2015"
+    ></script>
+    <script src="//unpkg.com/react@17.0.1/umd/react.production.min.js"></script>
+    <script src="//unpkg.com/react-dom@17.0.1/umd/react-dom.production.min.js"></script>
+    <script src="//unpkg.com/react-simple-wysiwyg@latest"></script>
+    <script>
+      function App() {
+        var statePair = React.useState('');
+        var value = statePair[0];
+        var setValue = statePair[1];
 
-      return [
-        React.createElement('h2', null, 'editor'),
-        React.createElement(ReactSimpleWysiwyg.DefaultEditor, {
-          value: value,
-          onChange: function(e) {
-            setValue(e.target.value);
-          }
-        }),
-        React.createElement('h2', null, 'source'),
-        React.createElement('textarea', {
-          value: value,
-          onChange: function(e) {
-            setValue(e.target.value);
-          }
-        })
-      ];
-    }
+        return [
+          React.createElement('h2', null, 'editor'),
+          React.createElement(ReactSimpleWysiwyg.DefaultEditor, {
+            value: value,
+            onChange: function (e) {
+              setValue(e.target.value);
+            },
+          }),
+          React.createElement('h2', null, 'source'),
+          React.createElement('textarea', {
+            value: value,
+            onChange: function (e) {
+              setValue(e.target.value);
+            },
+          }),
+        ];
+      }
 
-    ReactDOM.render(
-      React.createElement(App),
-      document.getElementById('root')
-    );
-  </script>
-</body>
+      ReactDOM.render(
+        React.createElement(App),
+        document.getElementById('root'),
+      );
+    </script>
+  </body>
 </html>

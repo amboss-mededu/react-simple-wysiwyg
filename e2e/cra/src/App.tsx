@@ -1,5 +1,7 @@
 import React from 'react';
-import RswEditor, { type ContentEditableEvent } from 'react-simple-wysiwyg';
+import RswEditor, {
+  type ContentEditableEvent,
+} from '@amboss-mededu/react-simple-wysiwyg';
 
 export default function App() {
   const [html, setHtml] = React.useState('');
