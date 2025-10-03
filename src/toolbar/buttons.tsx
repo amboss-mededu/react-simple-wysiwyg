@@ -209,5 +209,5 @@ export const BtnPhrasionary = createButton(
     sel.removeAllRanges();
     $el.focus();
   },
-  ({ $selection }) => !!asElement($selection)?.closest(PHRASE_SEL)
+  ({ $selection }) => !!asElement($selection)?.closest(PHRASE_SEL),
 );
