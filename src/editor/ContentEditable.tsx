@@ -46,9 +46,10 @@ export const ContentEditable = React.memo(
     React.useEffect(() => {
       restRef.current = rest;
       const el = elRef.current;
-      if (el && normalizeHtml(htmlRef.current) !== normalizeHtml(value)) {
-        htmlRef.current = value;
-        el.innerHTML = value;
+      const normalizedValue = normalizeHtml(value);
+      if (el && normalizeHtml(htmlRef.current) !== normalizedValue) {
+        htmlRef.current = normalizedValue;
+        el.innerHTML = normalizedValue;
         replaceCaret(el);
       }
     });
@@ -140,15 +141,28 @@ export const ContentEditable = React.memo(
                 }
               } else {
                 // For top-level lists, exit the list by creating a new line after it
-                const listContainer = parent.parentElement; // Should be the div wrapper
+                const editorRoot = elRef.current!; // your contentEditable host
+                const listEl = parent as HTMLOListElement | HTMLUListElement; // UL/OL
+                const maybeWrapper = listEl.parentElement;
+
                 const newDiv = document.createElement('div');
                 newDiv.innerHTML = '<br>';
 
-                // Insert the new div after the list's container
-                if (listContainer && listContainer.tagName === 'DIV') {
-                  listContainer.insertAdjacentElement('afterend', newDiv);
+                const isWrapperBlock =
+                  !!maybeWrapper &&
+                  (maybeWrapper.tagName === 'DIV' ||
+                    maybeWrapper.tagName === 'P') &&
+                  maybeWrapper.parentElement === editorRoot;
+
+                if (isWrapperBlock) {
+                  // <editorRoot> <div>[...<ul/ol>...]</div>  → insert after the wrapper
+                  maybeWrapper.insertAdjacentElement('afterend', newDiv);
+                } else if (editorRoot.contains(listEl)) {
+                  // <editorRoot> <ul/ol>…  → insert after the list itself (sibling)
+                  listEl.insertAdjacentElement('afterend', newDiv);
                 } else {
-                  parent.insertAdjacentElement('afterend', newDiv);
+                  // very defensive fallback: append to editor
+                  editorRoot.appendChild(newDiv);
                 }
 
                 listItem.remove();

@@ -7,6 +7,7 @@ import {
   BtnClearFormatting,
   BtnItalic,
   BtnLink,
+  BtnPhrasionary,
   BtnNumberedList,
   BtnRedo,
   BtnStrikeThrough,
@@ -45,6 +46,7 @@ export const DefaultEditor = React.forwardRef(function DefaultEditor(
             <BtnBulletList />
             <Separator />
             <BtnLink />
+            <BtnPhrasionary />
             <BtnClearFormatting />
             <BtnSpecialCharacters />
             <HtmlButton />

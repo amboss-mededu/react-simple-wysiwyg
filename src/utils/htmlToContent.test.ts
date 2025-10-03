@@ -344,6 +344,28 @@ describe('htmlToContent', () => {
     expect(htmlToContent(html)).toEqual(expected);
   });
 
+  test('handles phrasionary content within formatted text', () => {
+    const html =
+      'first <b><span data-content-type="phrasionary" data-content-id="123">line</span></b><br> <span data-content-type="phrasionary" data-content-id="123">second</span> line';
+    const expected: ContentRoot = {
+      type: 'root',
+      children: [
+        {
+          type: 'inline',
+          content: [
+            { type: 'text', value: 'first ' },
+            { type: 'phrasionary', id: '123', value: 'line' },
+            { type: 'text', value: '\n ' },
+            { type: 'phrasionary', id: '123', value: 'second' },
+            { type: 'text', value: ' line' },
+          ],
+        },
+      ],
+    };
+
+    expect(htmlToContent(html)).toEqual(expected);
+  });
+
   test('handles list items with inline formatting', () => {
     const html =
       '<div><ul><li>Item with <b>bold</b> text</li><li>Item with <i>italic</i> and <sub>subscript</sub></li></ul></div>';
@@ -712,7 +734,7 @@ describe('htmlToContent', () => {
                     {
                       type: 'phrasionary',
                       id: '333',
-                      value: '<b>bold</b> term',
+                      value: 'bold term',
                     },
                   ],
                 },

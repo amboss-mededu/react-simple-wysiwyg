@@ -230,15 +230,23 @@ function buildInlineFromNodes(
       flushText();
 
       const id = (node as HTMLElement).dataset.contentId!;
-      // Its value can contain preserved inline tags (<b>, <i>, <sub>, <sup>)
-      const value = serializeAllowedInline(node);
+      // Use plain text content without formatting
+      const value = node.textContent || '';
 
       out.push({ type: 'phrasionary', id, value });
       continue;
     }
 
-    // For everything else inside an inline run, serialize to text with allowed tags preserved
-    textBuf += serializeAllowedInline(node);
+    // Check if this element contains phrasionary spans recursively
+    const phrasionarySpans = findPhrasionarySpans(node);
+    if (phrasionarySpans.length > 0) {
+      // If we found phrasionary content, we need to carefully parse this element
+      flushText();
+      parseElementWithPhrasionary(node, out);
+    } else {
+      // For everything else inside an inline run, serialize to text with allowed tags preserved
+      textBuf += serializeAllowedInline(node);
+    }
   }
 
   flushText();
@@ -260,6 +268,92 @@ function buildInlineFromNodes(
   }
 
   return { type: 'inline', content: merged };
+}
+
+/**
+ * Recursively find all phrasionary spans within an element
+ */
+function findPhrasionarySpans(element: Element): Element[] {
+  const spans: Element[] = [];
+
+  // Check if this element itself is a phrasionary span
+  if (
+    element.tagName.toLowerCase() === 'span' &&
+    (element as HTMLElement).dataset?.contentType === 'phrasionary' &&
+    (element as HTMLElement).dataset?.contentId
+  ) {
+    spans.push(element);
+    return spans;
+  }
+
+  // Recursively search children
+  for (const child of Array.from(element.children)) {
+    spans.push(...findPhrasionarySpans(child));
+  }
+
+  return spans;
+}
+
+/**
+ * Parse an element that contains phrasionary spans, carefully extracting
+ * text content and phrasionary content in order
+ */
+function parseElementWithPhrasionary(
+  element: Element,
+  out: Array<TextContent | PhrasionaryContent>,
+): void {
+  let textBuf = '';
+
+  const flushText = () => {
+    if (textBuf !== '') {
+      out.push({ type: 'text', value: textBuf });
+      textBuf = '';
+    }
+  };
+
+  // Walk through all child nodes
+  for (const node of Array.from(element.childNodes)) {
+    if (isText(node)) {
+      textBuf += node.nodeValue ?? '';
+      continue;
+    }
+
+    if (!isElement(node)) continue;
+
+    const tag = node.tagName.toLowerCase();
+
+    if (tag === 'br') {
+      textBuf += '\n';
+      continue;
+    }
+
+    // Check if this is a phrasionary span
+    if (
+      tag === 'span' &&
+      (node as HTMLElement).dataset?.contentType === 'phrasionary' &&
+      (node as HTMLElement).dataset?.contentId
+    ) {
+      // Flush any pending text
+      flushText();
+
+      const id = (node as HTMLElement).dataset.contentId!;
+      const value = node.textContent || '';
+      out.push({ type: 'phrasionary', id, value });
+      continue;
+    }
+
+    // Check if this element contains phrasionary spans
+    const phrasionarySpans = findPhrasionarySpans(node);
+    if (phrasionarySpans.length > 0) {
+      // Recursively parse this element
+      parseElementWithPhrasionary(node, out);
+    } else {
+      // No phrasionary content, serialize normally
+      textBuf += serializeAllowedInline(node);
+    }
+  }
+
+  flushText();
 }
 
 /* -------------------- serialization helpers -------------------- */

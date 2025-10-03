@@ -82,6 +82,12 @@
   list-style-type: lower-roman;
 }
 
+/* Phrasionary link styles */
+.rsw-ce span[data-content-type='phrasionary'] {
+  color: #2c5aa0;
+  text-decoration: underline;
+}
+
 .rsw-html {
   background: transparent;
   border: none;
