@@ -3,10 +3,24 @@ export type TextContent = {
   value: string; // Supports <b>, <i>, <sub>, <sup> tags
 };
 
+export type PhrasionaryContent = {
+  type: 'phrasionary';
+  /* ID of the Phrasionary entry */
+  id: string;
+  /* Text content of the Phrasionary entry */
+  value: string;
+};
+
+export type InlineContent = {
+  type: 'inline';
+  /* Inline content within text, e.g., text, phrasionary */
+  content: Array<TextContent | PhrasionaryContent>;
+};
+
 export type ListItem = {
   type: 'list-item';
-  /* Text content of the list item, supports <b>, <i>, <sub>, <sup> */
-  value: string;
+  /* Optional inline content within the list item */
+  content: InlineContent;
   /* Optional nested lists under this item */
   children?: Array<UnorderedListContent | OrderedListContent>;
 };
@@ -21,10 +35,14 @@ export type OrderedListContent = {
   items: ListItem[];
 };
 
+/**
+ * A block of content, which can be text, lists, or inline content.
+ * Avoid using TextContent directly; use InlineContent for content.
+ */
 export type ContentBlock =
-  | TextContent
   | UnorderedListContent
-  | OrderedListContent;
+  | OrderedListContent
+  | InlineContent;
 
 export type ContentRoot = {
   type: 'root';
