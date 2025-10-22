@@ -78,3 +78,14 @@ export function contentToHtml(content: ContentRoot): string {
 
   return blocks.join('');
 }
+
+export function isEmptyContent(content: ContentRoot): boolean {
+  if (!content || content.type !== 'root' || !Array.isArray(content.children)) {
+    return true;
+  }
+
+  return content.children.every((block) => {
+    const html = contentBlockToHtml(block);
+    return html === '' || html.trim() === '';
+  });
+}
