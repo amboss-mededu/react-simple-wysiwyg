@@ -5,6 +5,7 @@ import OrderedListIcon from './icons/OrderedListIcon';
 import UnorderedListIcon from './icons/UnorderedListIcon';
 
 const PHRASE_SEL = '[data-content-type="phrasionary"]';
+const NGDE_SEL = '[data-content-type="ngde"]';
 
 function asElement(n?: Node | null) {
   return n instanceof Element ? n : (n?.parentElement ?? null);
@@ -34,6 +35,21 @@ function phrasionarySpansInRange(
     acceptNode: (node) => {
       if (!(node as Element).matches?.(PHRASE_SEL))
         return NodeFilter.FILTER_SKIP;
+      return rangeIntersectsNode(range, node as Element)
+        ? NodeFilter.FILTER_ACCEPT
+        : NodeFilter.FILTER_REJECT;
+    },
+  });
+  let n: Node | null;
+  while ((n = walker.nextNode())) out.push(n as HTMLElement);
+  return out;
+}
+
+function ngdeSpansInRange(root: HTMLElement, range: Range): HTMLElement[] {
+  const out: HTMLElement[] = [];
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT, {
+    acceptNode: (node) => {
+      if (!(node as Element).matches?.(NGDE_SEL)) return NodeFilter.FILTER_SKIP;
       return rangeIntersectsNode(range, node as Element)
         ? NodeFilter.FILTER_ACCEPT
         : NodeFilter.FILTER_REJECT;
@@ -210,4 +226,60 @@ export const BtnPhrasionary = createButton(
     $el.focus();
   },
   ({ $selection }) => !!asElement($selection)?.closest(PHRASE_SEL),
+);
+
+export const BtnNgde = createButton(
+  'NGDE',
+  '💊',
+  ({ $el, $selection }) => {
+    if (!$el) return;
+
+    // 1) caret inside an existing NGDE → unwrap (toggle off)
+    const selEl = asElement($selection);
+    const host = selEl?.closest(NGDE_SEL) as HTMLElement | null;
+    if (host && $el.contains(host)) {
+      unwrap(host);
+      $el.focus();
+      return;
+    }
+
+    const sel = document.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    const range = sel.getRangeAt(0);
+
+    // 2) if selection intersects any NGDE spans → unwrap them
+    const hits = ngdeSpansInRange($el, range);
+    if (hits.length) {
+      hits.sort((a, b) => (a.contains(b) ? 1 : b.contains(a) ? -1 : 0));
+      hits.forEach(unwrap);
+      $el.focus();
+      return;
+    }
+
+    // 3) if selection spans multiple blocks → do nothing
+    if (!range.collapsed) {
+      const ancestor = range.commonAncestorContainer;
+      if (ancestor && asElement(ancestor)?.querySelector('li,p,div')) {
+        alert('NGDE entries cannot span multiple blocks.');
+        return;
+      }
+    }
+
+    // 4) single-block selection → inline wrap
+    const text = range.toString();
+    if (!text.trim()) return alert('Please select some text first');
+    const eid = prompt('NGDE EID', '');
+    if (!eid) return;
+
+    const span = document.createElement('span');
+    span.setAttribute('data-content-type', 'ngde');
+    span.setAttribute('data-content-eid', eid);
+    span.textContent = text;
+
+    range.deleteContents();
+    range.insertNode(span);
+    sel.removeAllRanges();
+    $el.focus();
+  },
+  ({ $selection }) => !!asElement($selection)?.closest(NGDE_SEL),
 );

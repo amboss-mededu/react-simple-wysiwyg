@@ -6,6 +6,7 @@ import {
   OrderedListContent,
   UnorderedListContent,
   PhrasionaryContent,
+  NgdeContent,
   TextContent,
 } from '../types/content';
 
@@ -186,14 +187,14 @@ function buildListItem(li: Element): {
 
 /**
  * Turn a sequence of nodes into a single InlineContent array,
- * mixing TextContent with PhrasionaryContent. Consecutive text
+ * mixing TextContent with PhrasionaryContent and NgdeContent. Consecutive text
  * fragments are merged into one TextContent to match tests.
  */
 function buildInlineFromNodes(
   nodes: Node[],
   opts: { allowEmpty?: boolean } = {},
 ): InlineContent {
-  const out: Array<TextContent | PhrasionaryContent> = [];
+  const out: Array<TextContent | PhrasionaryContent | NgdeContent> = [];
   let textBuf = '';
 
   const flushText = () => {
@@ -237,6 +238,24 @@ function buildInlineFromNodes(
       continue;
     }
 
+    // NGDE: <span data-content-type="ngde" data-content-eid="...">...</span>
+    if (
+      tag === 'span' &&
+      (node as HTMLElement).dataset &&
+      (node as HTMLElement).dataset.contentType === 'ngde' &&
+      (node as HTMLElement).dataset.contentEid
+    ) {
+      // close any pending text BEFORE inserting a structured token
+      flushText();
+
+      const eid = (node as HTMLElement).dataset.contentEid!;
+      // Use plain text content without formatting
+      const value = node.textContent || '';
+
+      out.push({ type: 'ngde', eid, value });
+      continue;
+    }
+
     // Check if this element contains phrasionary spans recursively
     const phrasionarySpans = findPhrasionarySpans(node);
     if (phrasionarySpans.length > 0) {
@@ -257,7 +276,7 @@ function buildInlineFromNodes(
   }
 
   // Merge adjacent TextContent nodes (safety in case serializeAllowedInline returned empty nodes)
-  const merged: Array<TextContent | PhrasionaryContent> = [];
+  const merged: Array<TextContent | PhrasionaryContent | NgdeContent> = [];
   for (const item of out) {
     const last = merged[merged.length - 1];
     if (item.type === 'text' && last && last.type === 'text') {
@@ -271,7 +290,7 @@ function buildInlineFromNodes(
 }
 
 /**
- * Recursively find all phrasionary spans within an element
+ * Recursively find all phrasionary and NGDE spans within an element
  */
 function findPhrasionarySpans(element: Element): Element[] {
   const spans: Element[] = [];
@@ -286,6 +305,16 @@ function findPhrasionarySpans(element: Element): Element[] {
     return spans;
   }
 
+  // Check if this element itself is an NGDE span
+  if (
+    element.tagName.toLowerCase() === 'span' &&
+    (element as HTMLElement).dataset?.contentType === 'ngde' &&
+    (element as HTMLElement).dataset?.contentEid
+  ) {
+    spans.push(element);
+    return spans;
+  }
+
   // Recursively search children
   for (const child of Array.from(element.children)) {
     spans.push(...findPhrasionarySpans(child));
@@ -295,12 +324,12 @@ function findPhrasionarySpans(element: Element): Element[] {
 }
 
 /**
- * Parse an element that contains phrasionary spans, carefully extracting
- * text content and phrasionary content in order
+ * Parse an element that contains phrasionary or NGDE spans, carefully extracting
+ * text content and phrasionary/NGDE content in order
  */
 function parseElementWithPhrasionary(
   element: Element,
-  out: Array<TextContent | PhrasionaryContent>,
+  out: Array<TextContent | PhrasionaryContent | NgdeContent>,
 ): void {
   let textBuf = '';
 
@@ -342,7 +371,22 @@ function parseElementWithPhrasionary(
       continue;
     }
 
-    // Check if this element contains phrasionary spans
+    // Check if this is an NGDE span
+    if (
+      tag === 'span' &&
+      (node as HTMLElement).dataset?.contentType === 'ngde' &&
+      (node as HTMLElement).dataset?.contentEid
+    ) {
+      // Flush any pending text
+      flushText();
+
+      const eid = (node as HTMLElement).dataset.contentEid!;
+      const value = node.textContent || '';
+      out.push({ type: 'ngde', eid, value });
+      continue;
+    }
+
+    // Check if this element contains phrasionary or NGDE spans
     const phrasionarySpans = findPhrasionarySpans(node);
     if (phrasionarySpans.length > 0) {
       // Recursively parse this element
