@@ -734,7 +734,7 @@ describe('htmlToContent', () => {
                     {
                       type: 'phrasionary',
                       id: '333',
-                      value: 'bold term',
+                      value: '<b>bold</b> term',
                     },
                   ],
                 },

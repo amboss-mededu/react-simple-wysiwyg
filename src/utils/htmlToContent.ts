@@ -231,8 +231,10 @@ function buildInlineFromNodes(
       flushText();
 
       const id = (node as HTMLElement).dataset.contentId!;
-      // Use plain text content without formatting
-      const value = node.textContent || '';
+      // Preserve allowed inline formatting (b, i, sub, sup)
+      const value = Array.from(node.childNodes)
+        .map(serializeAllowedInline)
+        .join('');
 
       out.push({ type: 'phrasionary', id, value });
       continue;
@@ -249,8 +251,10 @@ function buildInlineFromNodes(
       flushText();
 
       const eid = (node as HTMLElement).dataset.contentEid!;
-      // Use plain text content without formatting
-      const value = node.textContent || '';
+      // Preserve allowed inline formatting (b, i, sub, sup)
+      const value = Array.from(node.childNodes)
+        .map(serializeAllowedInline)
+        .join('');
 
       out.push({ type: 'ngde', eid, value });
       continue;
@@ -366,7 +370,10 @@ function parseElementWithPhrasionary(
       flushText();
 
       const id = (node as HTMLElement).dataset.contentId!;
-      const value = node.textContent || '';
+      // Preserve allowed inline formatting (b, i, sub, sup)
+      const value = Array.from(node.childNodes)
+        .map(serializeAllowedInline)
+        .join('');
       out.push({ type: 'phrasionary', id, value });
       continue;
     }
@@ -381,7 +388,10 @@ function parseElementWithPhrasionary(
       flushText();
 
       const eid = (node as HTMLElement).dataset.contentEid!;
-      const value = node.textContent || '';
+      // Preserve allowed inline formatting (b, i, sub, sup)
+      const value = Array.from(node.childNodes)
+        .map(serializeAllowedInline)
+        .join('');
       out.push({ type: 'ngde', eid, value });
       continue;
     }
