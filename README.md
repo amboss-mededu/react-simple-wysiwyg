@@ -209,6 +209,67 @@ To fix that, you should redefine these styles again:
 [#55](https://github.com/megahertz/react-simple-wysiwyg/issues/55). Also, it's a
 good example of inserting a custom HTML element.
 
+## Release Procedure
+
+This repository uses a squash-and-merge workflow with protected master branch. To release a new version:
+
+### 1. Publish Pre-release from Feature Branch
+
+On your feature branch, publish a beta version for testing:
+
+```bash
+npm version prerelease --preid=beta  # e.g., 3.7.0 -> 3.7.1-beta.0
+npm publish --tag beta
+```
+
+### 2. Update e2e Tests
+
+Update `e2e/cra/package.json` to use the beta version:
+
+```json
+"@amboss-mededu/react-simple-wysiwyg": "^3.7.1-beta.0"
+```
+
+Commit and push:
+
+```bash
+git add e2e/cra/package.json
+git commit -m "chore: update e2e to beta version"
+git push
+```
+
+### 3. Create PR and Merge
+
+Create PR for your feature branch → master. CI will pass because the beta version exists in the registry. Squash and merge via GitHub.
+
+### 4. Publish Stable Release from Master
+
+After merging, checkout master and publish the stable version:
+
+```bash
+git checkout master
+git pull origin master
+
+# Bump to stable version (this also commits, tags, and pushes via postversion hook)
+npm version minor  # or major/patch as appropriate
+
+# Publish stable version
+npm publish
+```
+
+### 5. Update e2e to Stable Version
+
+Update `e2e/cra/package.json` to the stable version and commit:
+
+```bash
+# Update e2e/cra/package.json to stable version
+git add e2e/cra/package.json
+git commit -m "chore: update e2e to stable version"
+git push origin master
+```
+
+**Note:** The `postversion` script automatically handles git tagging and pushing. Beta versions are published with the `beta` tag to avoid affecting users who install with `npm install`.
+
 ## Credits
 
 - Based on

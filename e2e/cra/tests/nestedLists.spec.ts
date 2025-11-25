@@ -15,19 +15,21 @@ test('creates nested lists with Tab key', async ({ page }) => {
 
   // Type first item
   await editor.type('First item');
-  await page.keyboard.press('Enter');
+  await editor.press('Enter');
 
   // Type second item and indent it with Tab
   await editor.type('Nested item');
-  await page.keyboard.press('Tab');
+  await editor.press('Tab');
+  await page.waitForTimeout(100); // Wait for DOM to update after Tab
 
   // Type third nested item
-  await page.keyboard.press('Enter');
+  await editor.press('Enter');
   await editor.type('Another nested item');
 
   // Go back to top level
-  await page.keyboard.press('Enter');
-  await page.keyboard.press('Shift+Tab');
+  await editor.press('Enter');
+  await editor.press('Shift+Tab');
+  await page.waitForTimeout(100); // Wait for DOM to update after Shift+Tab
   await editor.type('Back to top level');
 
   // Blur the editor to ensure all changes are applied
@@ -63,19 +65,21 @@ test('creates mixed nested lists (ul and ol)', async ({ page }) => {
   await page.click('button[title="Bullet list"]');
 
   await editor.type('Bullet item');
-  await page.keyboard.press('Enter');
+  await editor.press('Enter');
 
   // Change to ordered list and indent
   await page.click('button[title="Numbered list"]');
-  await page.keyboard.press('Tab');
+  await editor.press('Tab');
+  await page.waitForTimeout(100); // Wait for DOM to update after Tab
   await editor.type('Numbered sub-item 1');
 
-  await page.keyboard.press('Enter');
+  await editor.press('Enter');
   await editor.type('Numbered sub-item 2');
 
   // Outdent and add another bullet item
-  await page.keyboard.press('Enter');
-  await page.keyboard.press('Shift+Tab');
+  await editor.press('Enter');
+  await editor.press('Shift+Tab');
+  await page.waitForTimeout(100); // Wait for DOM to update after Shift+Tab
   await page.click('button[title="Bullet list"]');
   await editor.type('Another bullet item');
 
@@ -106,17 +110,19 @@ test('exits nested list with Enter on empty item', async ({ page }) => {
   await page.click('button[title="Bullet list"]');
 
   await editor.type('First item');
-  await page.keyboard.press('Enter');
+  await editor.press('Enter');
 
   await editor.type('Second item');
-  await page.keyboard.press('Tab'); // Indent
+  await editor.press('Tab'); // Indent
+  await page.waitForTimeout(100); // Wait for DOM to update after Tab
 
-  await page.keyboard.press('Enter');
+  await editor.press('Enter');
   await editor.type('Nested item');
 
   // Create empty nested item and press Enter to outdent
-  await page.keyboard.press('Enter');
-  await page.keyboard.press('Enter'); // This should outdent to parent level
+  await editor.press('Enter');
+  await editor.press('Enter'); // This should outdent to parent level
+  await page.waitForTimeout(100); // Wait for DOM to update after outdent
 
   await editor.type('Back to first level');
 
@@ -145,10 +151,11 @@ test('exits list completely with Enter on empty top-level item', async ({
   await page.click('button[title="Bullet list"]');
 
   await editor.type('List item');
-  await page.keyboard.press('Enter');
+  await editor.press('Enter');
 
   // Create empty item at top level and press Enter to exit list
-  await page.keyboard.press('Enter');
+  await editor.press('Enter');
+  await page.waitForTimeout(100); // Wait for DOM to update after exiting list
 
   // Should now be outside the list
   await editor.type('Text after list');
@@ -179,21 +186,24 @@ test('handles Shift+Tab outdenting correctly', async ({ page }) => {
 
   // Create deeply nested structure
   await editor.type('Level 1');
-  await page.keyboard.press('Enter');
+  await editor.press('Enter');
 
   await editor.type('Level 1 item 2');
-  await page.keyboard.press('Tab'); // Nest to level 2
+  await editor.press('Tab'); // Nest to level 2
+  await page.waitForTimeout(100); // Wait for DOM to update after Tab
 
-  await page.keyboard.press('Enter');
+  await editor.press('Enter');
   await editor.type('Level 2 item');
-  await page.keyboard.press('Tab'); // Try to nest to level 3 (should be limited to 2 levels)
+  await editor.press('Tab'); // Try to nest to level 3 (should be limited to 2 levels)
+  await page.waitForTimeout(100); // Wait for DOM to update after Tab
 
   // Now outdent back
-  await page.keyboard.press('Enter');
+  await editor.press('Enter');
   await editor.type('Still level 2');
-  await page.keyboard.press('Shift+Tab'); // Back to level 1
+  await editor.press('Shift+Tab'); // Back to level 1
+  await page.waitForTimeout(100); // Wait for DOM to update after Shift+Tab
 
-  await page.keyboard.press('Enter');
+  await editor.press('Enter');
   await editor.type('Back to level 1');
 
   await editor.blur();
@@ -271,14 +281,16 @@ test('respects maximum nesting depth of 2 levels', async ({ page }) => {
   await page.click('button[title="Bullet list"]');
 
   await editor.type('Level 1');
-  await page.keyboard.press('Enter');
+  await editor.press('Enter');
 
   await editor.type('Level 2');
-  await page.keyboard.press('Tab'); // Indent to level 2
+  await editor.press('Tab'); // Indent to level 2
+  await page.waitForTimeout(100); // Wait for DOM to update after Tab
 
-  await page.keyboard.press('Enter');
+  await editor.press('Enter');
   await editor.type('Trying level 3');
-  await page.keyboard.press('Tab'); // Should not indent beyond level 2
+  await editor.press('Tab'); // Should not indent beyond level 2
+  await page.waitForTimeout(100); // Wait for DOM to update after Tab
 
   await editor.blur();
 
