@@ -4,4 +4,5 @@ node_modules
 .DS_Store
 .idea
 .vscode
+.npmrc
 .npmrce2e/cra/.npmrc
