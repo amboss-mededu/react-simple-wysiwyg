@@ -734,7 +734,7 @@ describe('htmlToContent', () => {
                     {
                       type: 'phrasionary',
                       id: '333',
-                      value: 'bold term',
+                      value: '<b>bold</b> term',
                     },
                   ],
                 },
@@ -768,6 +768,178 @@ describe('htmlToContent', () => {
               {
                 type: 'text',
                 value: ' content',
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(htmlToContent(html)).toEqual(expected);
+    });
+  });
+
+  describe('NGDE content', () => {
+    test('parses standalone NGDE span as InlineContent', () => {
+      const html =
+        '<div><span data-content-type="ngde" data-content-eid="drug-123">aspirin</span></div>';
+      const expected: ContentRoot = {
+        type: 'root',
+        children: [
+          {
+            type: 'inline',
+            content: [
+              {
+                type: 'ngde',
+                eid: 'drug-123',
+                value: 'aspirin',
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(htmlToContent(html)).toEqual(expected);
+    });
+
+    test('parses mixed text and NGDE content inline', () => {
+      const html =
+        '<div>Take <span data-content-type="ngde" data-content-eid="drug-456">ibuprofen</span> twice daily</div>';
+      const expected: ContentRoot = {
+        type: 'root',
+        children: [
+          {
+            type: 'inline',
+            content: [
+              {
+                type: 'text',
+                value: 'Take ',
+              },
+              {
+                type: 'ngde',
+                eid: 'drug-456',
+                value: 'ibuprofen',
+              },
+              {
+                type: 'text',
+                value: ' twice daily',
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(htmlToContent(html)).toEqual(expected);
+    });
+
+    test('parses NGDE content within list items', () => {
+      const html =
+        '<div><ul><li>Drug: <span data-content-type="ngde" data-content-eid="drug-789">metformin</span></li></ul></div>';
+      const expected: ContentRoot = {
+        type: 'root',
+        children: [
+          {
+            type: 'unordered-list',
+            items: [
+              {
+                type: 'list-item',
+                content: {
+                  type: 'inline',
+                  content: [
+                    {
+                      type: 'text',
+                      value: 'Drug: ',
+                    },
+                    {
+                      type: 'ngde',
+                      eid: 'drug-789',
+                      value: 'metformin',
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(htmlToContent(html)).toEqual(expected);
+    });
+
+    test('parses multiple NGDE spans in same block', () => {
+      const html =
+        '<div><span data-content-type="ngde" data-content-eid="drug-111">aspirin</span> and <span data-content-type="ngde" data-content-eid="drug-222">ibuprofen</span></div>';
+      const expected: ContentRoot = {
+        type: 'root',
+        children: [
+          {
+            type: 'inline',
+            content: [
+              {
+                type: 'ngde',
+                eid: 'drug-111',
+                value: 'aspirin',
+              },
+              {
+                type: 'text',
+                value: ' and ',
+              },
+              {
+                type: 'ngde',
+                eid: 'drug-222',
+                value: 'ibuprofen',
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(htmlToContent(html)).toEqual(expected);
+    });
+
+    test('parses mixed phrasionary and NGDE content', () => {
+      const html =
+        '<div><span data-content-type="phrasionary" data-content-id="term-1">medical term</span> treated with <span data-content-type="ngde" data-content-eid="drug-1">medication</span></div>';
+      const expected: ContentRoot = {
+        type: 'root',
+        children: [
+          {
+            type: 'inline',
+            content: [
+              {
+                type: 'phrasionary',
+                id: 'term-1',
+                value: 'medical term',
+              },
+              {
+                type: 'text',
+                value: ' treated with ',
+              },
+              {
+                type: 'ngde',
+                eid: 'drug-1',
+                value: 'medication',
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(htmlToContent(html)).toEqual(expected);
+    });
+
+    test('handles NGDE content within formatted text', () => {
+      const html =
+        '<div><b><span data-content-type="ngde" data-content-eid="drug-333">bold drug</span></b></div>';
+      const expected: ContentRoot = {
+        type: 'root',
+        children: [
+          {
+            type: 'inline',
+            content: [
+              {
+                type: 'ngde',
+                eid: 'drug-333',
+                value: 'bold drug',
               },
             ],
           },

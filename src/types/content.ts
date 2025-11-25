@@ -11,10 +11,18 @@ export type PhrasionaryContent = {
   value: string;
 };
 
+export type NgdeContent = {
+  type: 'ngde';
+  /* EID of the Next Generation Drug Entity */
+  eid: string;
+  /* Text content of the NGDE entry */
+  value: string;
+};
+
 export type InlineContent = {
   type: 'inline';
-  /* Inline content within text, e.g., text, phrasionary */
-  content: Array<TextContent | PhrasionaryContent>;
+  /* Inline content within text, e.g., text, phrasionary, ngde */
+  content: Array<TextContent | PhrasionaryContent | NgdeContent>;
 };
 
 export type ListItem = {

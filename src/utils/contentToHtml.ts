@@ -41,8 +41,11 @@ function renderInlineContent(inline: InlineContent): string {
     if (content.type === 'text') {
       html += content.value;
     } else if (content.type === 'phrasionary') {
-      // Render phrasionary entries as links
+      // Render phrasionary entries as spans
       html += `<span data-content-type="phrasionary" data-content-id="${content.id}">${content.value}</span>`;
+    } else if (content.type === 'ngde') {
+      // Render NGDE entries as spans
+      html += `<span data-content-type="ngde" data-content-eid="${content.eid}">${content.value}</span>`;
     }
   }
   return html;

@@ -598,4 +598,154 @@ describe('contentToHtml', () => {
       );
     });
   });
+
+  describe('NGDE content', () => {
+    test('converts standalone NGDE to span', () => {
+      const content: ContentRoot = {
+        type: 'root',
+        children: [
+          {
+            type: 'inline',
+            content: [
+              {
+                type: 'ngde',
+                eid: 'drug-123',
+                value: 'aspirin',
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(contentToHtml(content)).toBe(
+        '<div><span data-content-type="ngde" data-content-eid="drug-123">aspirin</span></div>',
+      );
+    });
+
+    test('converts mixed text and NGDE content', () => {
+      const content: ContentRoot = {
+        type: 'root',
+        children: [
+          {
+            type: 'inline',
+            content: [
+              {
+                type: 'text',
+                value: 'Take ',
+              },
+              {
+                type: 'ngde',
+                eid: 'drug-456',
+                value: 'ibuprofen',
+              },
+              {
+                type: 'text',
+                value: ' twice daily',
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(contentToHtml(content)).toBe(
+        '<div>Take <span data-content-type="ngde" data-content-eid="drug-456">ibuprofen</span> twice daily</div>',
+      );
+    });
+
+    test('converts NGDE content within list items', () => {
+      const content: ContentRoot = {
+        type: 'root',
+        children: [
+          {
+            type: 'unordered-list',
+            items: [
+              {
+                type: 'list-item',
+                content: {
+                  type: 'inline',
+                  content: [
+                    {
+                      type: 'text',
+                      value: 'Drug: ',
+                    },
+                    {
+                      type: 'ngde',
+                      eid: 'drug-789',
+                      value: 'metformin',
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(contentToHtml(content)).toBe(
+        '<div><ul><li>Drug: <span data-content-type="ngde" data-content-eid="drug-789">metformin</span></li></ul></div>',
+      );
+    });
+
+    test('converts multiple NGDE spans in same block', () => {
+      const content: ContentRoot = {
+        type: 'root',
+        children: [
+          {
+            type: 'inline',
+            content: [
+              {
+                type: 'ngde',
+                eid: 'drug-111',
+                value: 'aspirin',
+              },
+              {
+                type: 'text',
+                value: ' and ',
+              },
+              {
+                type: 'ngde',
+                eid: 'drug-222',
+                value: 'ibuprofen',
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(contentToHtml(content)).toBe(
+        '<div><span data-content-type="ngde" data-content-eid="drug-111">aspirin</span> and <span data-content-type="ngde" data-content-eid="drug-222">ibuprofen</span></div>',
+      );
+    });
+
+    test('converts mixed phrasionary and NGDE content', () => {
+      const content: ContentRoot = {
+        type: 'root',
+        children: [
+          {
+            type: 'inline',
+            content: [
+              {
+                type: 'phrasionary',
+                id: 'term-1',
+                value: 'medical term',
+              },
+              {
+                type: 'text',
+                value: ' treated with ',
+              },
+              {
+                type: 'ngde',
+                eid: 'drug-1',
+                value: 'medication',
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(contentToHtml(content)).toBe(
+        '<div><span data-content-type="phrasionary" data-content-id="term-1">medical term</span> treated with <span data-content-type="ngde" data-content-eid="drug-1">medication</span></div>',
+      );
+    });
+  });
 });
