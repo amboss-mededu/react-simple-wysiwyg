@@ -20,6 +20,7 @@ import {
   HtmlButton,
   Separator,
   Toolbar,
+  BtnNgde,
 } from '../toolbar';
 
 export const DefaultEditor = React.forwardRef(function DefaultEditor(
@@ -47,6 +48,7 @@ export const DefaultEditor = React.forwardRef(function DefaultEditor(
             <Separator />
             <BtnLink />
             <BtnPhrasionary />
+            <BtnNgde />
             <BtnClearFormatting />
             <BtnSpecialCharacters />
             <HtmlButton />
