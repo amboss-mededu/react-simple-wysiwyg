@@ -88,17 +88,12 @@
   text-decoration: underline;
 }
 
-/* NGDE (Next Generation Drug Entity) styles */
-.rsw-ce span[data-content-type='ngde'] {
-  background-color: #e8f5e9;
-  border-radius: 3px;
-  padding: 0 4px;
-  color: #2e7d32;
-}
-
-.rsw-ce span[data-content-type='ngde']::after {
-  content: ' 💊';
+/* Dosage entity (NGDE) styles - inline badge with emoji icon */
+.rsw-ce span.dosage-entity {
+  display: inline-block;
   font-size: 0.85em;
+  margin: 0 4px;
+  vertical-align: baseline;
 }
 
 .rsw-html {

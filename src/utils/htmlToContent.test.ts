@@ -778,10 +778,10 @@ describe('htmlToContent', () => {
     });
   });
 
-  describe('NGDE content', () => {
-    test('parses standalone NGDE span as InlineContent', () => {
+  describe('Dosage entity (NGDE) content', () => {
+    test('parses standalone dosage entity span as InlineContent', () => {
       const html =
-        '<div><span data-content-type="ngde" data-content-eid="drug-123">aspirin</span></div>';
+        '<div><span data-type="dosageEntity" data-dosage-entity-id="68aeb923a83f05f586c72d4b"></span></div>';
       const expected: ContentRoot = {
         type: 'root',
         children: [
@@ -790,8 +790,7 @@ describe('htmlToContent', () => {
             content: [
               {
                 type: 'ngde',
-                eid: 'drug-123',
-                value: 'aspirin',
+                entityId: '68aeb923a83f05f586c72d4b',
               },
             ],
           },
@@ -801,9 +800,31 @@ describe('htmlToContent', () => {
       expect(htmlToContent(html)).toEqual(expected);
     });
 
-    test('parses mixed text and NGDE content inline', () => {
+    test('parses dosage entity with substance ID', () => {
       const html =
-        '<div>Take <span data-content-type="ngde" data-content-eid="drug-456">ibuprofen</span> twice daily</div>';
+        '<div><span data-type="dosageEntity" data-dosage-entity-id="2542" data-substance-id="1287"></span></div>';
+      const expected: ContentRoot = {
+        type: 'root',
+        children: [
+          {
+            type: 'inline',
+            content: [
+              {
+                type: 'ngde',
+                entityId: '2542',
+                substanceId: '1287',
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(htmlToContent(html)).toEqual(expected);
+    });
+
+    test('parses mixed text and dosage entity content inline', () => {
+      const html =
+        '<div>Take <span data-type="dosageEntity" data-dosage-entity-id="drug-456" data-substance-id="774"></span> twice daily</div>';
       const expected: ContentRoot = {
         type: 'root',
         children: [
@@ -816,8 +837,8 @@ describe('htmlToContent', () => {
               },
               {
                 type: 'ngde',
-                eid: 'drug-456',
-                value: 'ibuprofen',
+                entityId: 'drug-456',
+                substanceId: '774',
               },
               {
                 type: 'text',
@@ -831,9 +852,9 @@ describe('htmlToContent', () => {
       expect(htmlToContent(html)).toEqual(expected);
     });
 
-    test('parses NGDE content within list items', () => {
+    test('parses dosage entity content within list items', () => {
       const html =
-        '<div><ul><li>Drug: <span data-content-type="ngde" data-content-eid="drug-789">metformin</span></li></ul></div>';
+        '<div><ul><li>Drug: <span data-type="dosageEntity" data-dosage-entity-id="drug-789"></span></li></ul></div>';
       const expected: ContentRoot = {
         type: 'root',
         children: [
@@ -851,8 +872,7 @@ describe('htmlToContent', () => {
                     },
                     {
                       type: 'ngde',
-                      eid: 'drug-789',
-                      value: 'metformin',
+                      entityId: 'drug-789',
                     },
                   ],
                 },
@@ -865,9 +885,9 @@ describe('htmlToContent', () => {
       expect(htmlToContent(html)).toEqual(expected);
     });
 
-    test('parses multiple NGDE spans in same block', () => {
+    test('parses multiple dosage entity spans in same block', () => {
       const html =
-        '<div><span data-content-type="ngde" data-content-eid="drug-111">aspirin</span> and <span data-content-type="ngde" data-content-eid="drug-222">ibuprofen</span></div>';
+        '<div><span data-type="dosageEntity" data-dosage-entity-id="drug-111"></span> and <span data-type="dosageEntity" data-dosage-entity-id="drug-222" data-substance-id="999"></span></div>';
       const expected: ContentRoot = {
         type: 'root',
         children: [
@@ -876,8 +896,7 @@ describe('htmlToContent', () => {
             content: [
               {
                 type: 'ngde',
-                eid: 'drug-111',
-                value: 'aspirin',
+                entityId: 'drug-111',
               },
               {
                 type: 'text',
@@ -885,8 +904,8 @@ describe('htmlToContent', () => {
               },
               {
                 type: 'ngde',
-                eid: 'drug-222',
-                value: 'ibuprofen',
+                entityId: 'drug-222',
+                substanceId: '999',
               },
             ],
           },
@@ -896,9 +915,9 @@ describe('htmlToContent', () => {
       expect(htmlToContent(html)).toEqual(expected);
     });
 
-    test('parses mixed phrasionary and NGDE content', () => {
+    test('parses mixed phrasionary and dosage entity content', () => {
       const html =
-        '<div><span data-content-type="phrasionary" data-content-id="term-1">medical term</span> treated with <span data-content-type="ngde" data-content-eid="drug-1">medication</span></div>';
+        '<div><span data-content-type="phrasionary" data-content-id="term-1">medical term</span> treated with <span data-type="dosageEntity" data-dosage-entity-id="drug-1" data-substance-id="sub-1"></span></div>';
       const expected: ContentRoot = {
         type: 'root',
         children: [
@@ -916,8 +935,8 @@ describe('htmlToContent', () => {
               },
               {
                 type: 'ngde',
-                eid: 'drug-1',
-                value: 'medication',
+                entityId: 'drug-1',
+                substanceId: 'sub-1',
               },
             ],
           },
@@ -927,9 +946,9 @@ describe('htmlToContent', () => {
       expect(htmlToContent(html)).toEqual(expected);
     });
 
-    test('handles NGDE content within formatted text', () => {
+    test('handles dosage entity with badge content (ignores inner HTML)', () => {
       const html =
-        '<div><b><span data-content-type="ngde" data-content-eid="drug-333">bold drug</span></b></div>';
+        '<div><b><span data-type="dosageEntity" data-dosage-entity-id="drug-333"><span class="dosageBadge">DOSAGE</span></span></b></div>';
       const expected: ContentRoot = {
         type: 'root',
         children: [
@@ -938,8 +957,29 @@ describe('htmlToContent', () => {
             content: [
               {
                 type: 'ngde',
-                eid: 'drug-333',
-                value: 'bold drug',
+                entityId: 'drug-333',
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(htmlToContent(html)).toEqual(expected);
+    });
+
+    test('parses dosage entity with objectId format', () => {
+      const html =
+        '<div><span data-type="dosageEntity" data-dosage-entity-id="68aeb923a83f05f586c72d4b" data-substance-id="774" id="dosage-68aeb923a83f05f586c72d4b"></span></div>';
+      const expected: ContentRoot = {
+        type: 'root',
+        children: [
+          {
+            type: 'inline',
+            content: [
+              {
+                type: 'ngde',
+                entityId: '68aeb923a83f05f586c72d4b',
+                substanceId: '774',
               },
             ],
           },

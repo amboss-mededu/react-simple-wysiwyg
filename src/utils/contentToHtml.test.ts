@@ -1,6 +1,17 @@
 import { contentToHtml } from './contentToHtml';
 import type { ContentRoot } from '../types/content';
 
+// Helper function to generate expected dosage entity HTML
+const dosageEntityHtml = (entityId: string, substanceId?: string) => {
+  const substanceAttr = substanceId
+    ? ` data-substance-id="${substanceId}"`
+    : '';
+  const title = substanceId
+    ? `Dosage Entity: ${entityId} (Substance: ${substanceId})`
+    : `Dosage Entity: ${entityId}`;
+  return `<span data-type="dosageEntity" data-dosage-entity-id="${entityId}"${substanceAttr} contenteditable="false" class="dosage-entity" title="${title}">💊</span>`;
+};
+
 describe('contentToHtml', () => {
   test('handles empty content', () => {
     const content: ContentRoot = {
@@ -599,8 +610,8 @@ describe('contentToHtml', () => {
     });
   });
 
-  describe('NGDE content', () => {
-    test('converts standalone NGDE to span', () => {
+  describe('Dosage entity (NGDE) content', () => {
+    test('converts standalone dosage entity to span', () => {
       const content: ContentRoot = {
         type: 'root',
         children: [
@@ -609,8 +620,7 @@ describe('contentToHtml', () => {
             content: [
               {
                 type: 'ngde',
-                eid: 'drug-123',
-                value: 'aspirin',
+                entityId: '68aeb923a83f05f586c72d4b',
               },
             ],
           },
@@ -618,11 +628,33 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        '<div><span data-content-type="ngde" data-content-eid="drug-123">aspirin</span></div>',
+        `<div>${dosageEntityHtml('68aeb923a83f05f586c72d4b')}</div>`,
       );
     });
 
-    test('converts mixed text and NGDE content', () => {
+    test('converts dosage entity with substance ID', () => {
+      const content: ContentRoot = {
+        type: 'root',
+        children: [
+          {
+            type: 'inline',
+            content: [
+              {
+                type: 'ngde',
+                entityId: '2542',
+                substanceId: '1287',
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(contentToHtml(content)).toBe(
+        `<div>${dosageEntityHtml('2542', '1287')}</div>`,
+      );
+    });
+
+    test('converts mixed text and dosage entity content', () => {
       const content: ContentRoot = {
         type: 'root',
         children: [
@@ -635,8 +667,8 @@ describe('contentToHtml', () => {
               },
               {
                 type: 'ngde',
-                eid: 'drug-456',
-                value: 'ibuprofen',
+                entityId: 'drug-456',
+                substanceId: '774',
               },
               {
                 type: 'text',
@@ -648,11 +680,11 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        '<div>Take <span data-content-type="ngde" data-content-eid="drug-456">ibuprofen</span> twice daily</div>',
+        `<div>Take ${dosageEntityHtml('drug-456', '774')} twice daily</div>`,
       );
     });
 
-    test('converts NGDE content within list items', () => {
+    test('converts dosage entity content within list items', () => {
       const content: ContentRoot = {
         type: 'root',
         children: [
@@ -670,8 +702,7 @@ describe('contentToHtml', () => {
                     },
                     {
                       type: 'ngde',
-                      eid: 'drug-789',
-                      value: 'metformin',
+                      entityId: 'drug-789',
                     },
                   ],
                 },
@@ -682,11 +713,11 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        '<div><ul><li>Drug: <span data-content-type="ngde" data-content-eid="drug-789">metformin</span></li></ul></div>',
+        `<div><ul><li>Drug: ${dosageEntityHtml('drug-789')}</li></ul></div>`,
       );
     });
 
-    test('converts multiple NGDE spans in same block', () => {
+    test('converts multiple dosage entity spans in same block', () => {
       const content: ContentRoot = {
         type: 'root',
         children: [
@@ -695,8 +726,7 @@ describe('contentToHtml', () => {
             content: [
               {
                 type: 'ngde',
-                eid: 'drug-111',
-                value: 'aspirin',
+                entityId: 'drug-111',
               },
               {
                 type: 'text',
@@ -704,8 +734,8 @@ describe('contentToHtml', () => {
               },
               {
                 type: 'ngde',
-                eid: 'drug-222',
-                value: 'ibuprofen',
+                entityId: 'drug-222',
+                substanceId: '999',
               },
             ],
           },
@@ -713,11 +743,11 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        '<div><span data-content-type="ngde" data-content-eid="drug-111">aspirin</span> and <span data-content-type="ngde" data-content-eid="drug-222">ibuprofen</span></div>',
+        `<div>${dosageEntityHtml('drug-111')} and ${dosageEntityHtml('drug-222', '999')}</div>`,
       );
     });
 
-    test('converts mixed phrasionary and NGDE content', () => {
+    test('converts mixed phrasionary and dosage entity content', () => {
       const content: ContentRoot = {
         type: 'root',
         children: [
@@ -735,8 +765,8 @@ describe('contentToHtml', () => {
               },
               {
                 type: 'ngde',
-                eid: 'drug-1',
-                value: 'medication',
+                entityId: 'drug-1',
+                substanceId: 'sub-1',
               },
             ],
           },
@@ -744,7 +774,7 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        '<div><span data-content-type="phrasionary" data-content-id="term-1">medical term</span> treated with <span data-content-type="ngde" data-content-eid="drug-1">medication</span></div>',
+        `<div><span data-content-type="phrasionary" data-content-id="term-1">medical term</span> treated with ${dosageEntityHtml('drug-1', 'sub-1')}</div>`,
       );
     });
   });
