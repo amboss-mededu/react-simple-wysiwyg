@@ -1,6 +1,17 @@
 import { contentToHtml } from './contentToHtml';
 import type { ContentRoot } from '../types/content';
 
+// Helper function to generate expected dosage entity HTML
+const dosageEntityHtml = (entityId: string, substanceId?: string) => {
+  const substanceAttr = substanceId
+    ? ` data-substance-id="${substanceId}"`
+    : '';
+  const title = substanceId
+    ? `Dosage Entity: ${entityId} (Substance: ${substanceId})`
+    : `Dosage Entity: ${entityId}`;
+  return `<span data-type="dosageEntity" data-dosage-entity-id="${entityId}"${substanceAttr} contenteditable="false" class="dosage-entity" title="${title}">💊</span>`;
+};
+
 describe('contentToHtml', () => {
   test('handles empty content', () => {
     const content: ContentRoot = {
@@ -617,7 +628,7 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        '<div><span data-type="dosageEntity" data-dosage-entity-id="68aeb923a83f05f586c72d4b"></span></div>',
+        `<div>${dosageEntityHtml('68aeb923a83f05f586c72d4b')}</div>`,
       );
     });
 
@@ -639,7 +650,7 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        '<div><span data-type="dosageEntity" data-dosage-entity-id="2542" data-substance-id="1287"></span></div>',
+        `<div>${dosageEntityHtml('2542', '1287')}</div>`,
       );
     });
 
@@ -669,7 +680,7 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        '<div>Take <span data-type="dosageEntity" data-dosage-entity-id="drug-456" data-substance-id="774"></span> twice daily</div>',
+        `<div>Take ${dosageEntityHtml('drug-456', '774')} twice daily</div>`,
       );
     });
 
@@ -702,7 +713,7 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        '<div><ul><li>Drug: <span data-type="dosageEntity" data-dosage-entity-id="drug-789"></span></li></ul></div>',
+        `<div><ul><li>Drug: ${dosageEntityHtml('drug-789')}</li></ul></div>`,
       );
     });
 
@@ -732,7 +743,7 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        '<div><span data-type="dosageEntity" data-dosage-entity-id="drug-111"></span> and <span data-type="dosageEntity" data-dosage-entity-id="drug-222" data-substance-id="999"></span></div>',
+        `<div>${dosageEntityHtml('drug-111')} and ${dosageEntityHtml('drug-222', '999')}</div>`,
       );
     });
 
@@ -763,7 +774,7 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        '<div><span data-content-type="phrasionary" data-content-id="term-1">medical term</span> treated with <span data-type="dosageEntity" data-dosage-entity-id="drug-1" data-substance-id="sub-1"></span></div>',
+        `<div><span data-content-type="phrasionary" data-content-id="term-1">medical term</span> treated with ${dosageEntityHtml('drug-1', 'sub-1')}</div>`,
       );
     });
   });

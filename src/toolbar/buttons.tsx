@@ -265,10 +265,18 @@ export const BtnNgde = createButton(
     const span = document.createElement('span');
     span.setAttribute('data-type', 'dosageEntity');
     span.setAttribute('data-dosage-entity-id', entityId);
+    span.setAttribute('contenteditable', 'false');
+    span.setAttribute('class', 'dosage-entity');
     if (substanceId) {
       span.setAttribute('data-substance-id', substanceId);
+      span.setAttribute(
+        'title',
+        `Dosage Entity: ${entityId} (Substance: ${substanceId})`,
+      );
+    } else {
+      span.setAttribute('title', `Dosage Entity: ${entityId}`);
     }
-    // Dosage entities are inline badges with no text content
+    span.textContent = `💊`;
 
     range.deleteContents();
     range.insertNode(span);
