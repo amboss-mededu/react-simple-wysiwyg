@@ -16,7 +16,12 @@ jobs:
           node-version: 22
 
       - run: npm install
+        with:
+            token: ${{ secrets.GITHUB_TOKEN }}
+
       - run: npm ci --prefix e2e/cra
+        with:
+            token: ${{ secrets.GITHUB_TOKEN }}
 
       - run: npm test
 
