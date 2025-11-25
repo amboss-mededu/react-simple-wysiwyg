@@ -35,7 +35,10 @@ export default [
       },
     ],
     plugins: [
-      typescript({ sourceMap: false }),
+      typescript({
+        exclude: ['**/*.test.ts', '**/*.test.tsx'],
+        sourceMap: false
+      }),
       styles({ minimize: true }),
       fileSize(),
     ],
