@@ -599,8 +599,8 @@ describe('contentToHtml', () => {
     });
   });
 
-  describe('NGDE content', () => {
-    test('converts standalone NGDE to span', () => {
+  describe('Dosage entity (NGDE) content', () => {
+    test('converts standalone dosage entity to span', () => {
       const content: ContentRoot = {
         type: 'root',
         children: [
@@ -609,8 +609,7 @@ describe('contentToHtml', () => {
             content: [
               {
                 type: 'ngde',
-                eid: 'drug-123',
-                value: 'aspirin',
+                entityId: '68aeb923a83f05f586c72d4b',
               },
             ],
           },
@@ -618,11 +617,33 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        '<div><span data-content-type="ngde" data-content-eid="drug-123">aspirin</span></div>',
+        '<div><span data-type="dosageEntity" data-dosage-entity-id="68aeb923a83f05f586c72d4b"></span></div>',
       );
     });
 
-    test('converts mixed text and NGDE content', () => {
+    test('converts dosage entity with substance ID', () => {
+      const content: ContentRoot = {
+        type: 'root',
+        children: [
+          {
+            type: 'inline',
+            content: [
+              {
+                type: 'ngde',
+                entityId: '2542',
+                substanceId: '1287',
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(contentToHtml(content)).toBe(
+        '<div><span data-type="dosageEntity" data-dosage-entity-id="2542" data-substance-id="1287"></span></div>',
+      );
+    });
+
+    test('converts mixed text and dosage entity content', () => {
       const content: ContentRoot = {
         type: 'root',
         children: [
@@ -635,8 +656,8 @@ describe('contentToHtml', () => {
               },
               {
                 type: 'ngde',
-                eid: 'drug-456',
-                value: 'ibuprofen',
+                entityId: 'drug-456',
+                substanceId: '774',
               },
               {
                 type: 'text',
@@ -648,11 +669,11 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        '<div>Take <span data-content-type="ngde" data-content-eid="drug-456">ibuprofen</span> twice daily</div>',
+        '<div>Take <span data-type="dosageEntity" data-dosage-entity-id="drug-456" data-substance-id="774"></span> twice daily</div>',
       );
     });
 
-    test('converts NGDE content within list items', () => {
+    test('converts dosage entity content within list items', () => {
       const content: ContentRoot = {
         type: 'root',
         children: [
@@ -670,8 +691,7 @@ describe('contentToHtml', () => {
                     },
                     {
                       type: 'ngde',
-                      eid: 'drug-789',
-                      value: 'metformin',
+                      entityId: 'drug-789',
                     },
                   ],
                 },
@@ -682,11 +702,11 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        '<div><ul><li>Drug: <span data-content-type="ngde" data-content-eid="drug-789">metformin</span></li></ul></div>',
+        '<div><ul><li>Drug: <span data-type="dosageEntity" data-dosage-entity-id="drug-789"></span></li></ul></div>',
       );
     });
 
-    test('converts multiple NGDE spans in same block', () => {
+    test('converts multiple dosage entity spans in same block', () => {
       const content: ContentRoot = {
         type: 'root',
         children: [
@@ -695,8 +715,7 @@ describe('contentToHtml', () => {
             content: [
               {
                 type: 'ngde',
-                eid: 'drug-111',
-                value: 'aspirin',
+                entityId: 'drug-111',
               },
               {
                 type: 'text',
@@ -704,8 +723,8 @@ describe('contentToHtml', () => {
               },
               {
                 type: 'ngde',
-                eid: 'drug-222',
-                value: 'ibuprofen',
+                entityId: 'drug-222',
+                substanceId: '999',
               },
             ],
           },
@@ -713,11 +732,11 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        '<div><span data-content-type="ngde" data-content-eid="drug-111">aspirin</span> and <span data-content-type="ngde" data-content-eid="drug-222">ibuprofen</span></div>',
+        '<div><span data-type="dosageEntity" data-dosage-entity-id="drug-111"></span> and <span data-type="dosageEntity" data-dosage-entity-id="drug-222" data-substance-id="999"></span></div>',
       );
     });
 
-    test('converts mixed phrasionary and NGDE content', () => {
+    test('converts mixed phrasionary and dosage entity content', () => {
       const content: ContentRoot = {
         type: 'root',
         children: [
@@ -735,8 +754,8 @@ describe('contentToHtml', () => {
               },
               {
                 type: 'ngde',
-                eid: 'drug-1',
-                value: 'medication',
+                entityId: 'drug-1',
+                substanceId: 'sub-1',
               },
             ],
           },
@@ -744,7 +763,7 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        '<div><span data-content-type="phrasionary" data-content-id="term-1">medical term</span> treated with <span data-content-type="ngde" data-content-eid="drug-1">medication</span></div>',
+        '<div><span data-content-type="phrasionary" data-content-id="term-1">medical term</span> treated with <span data-type="dosageEntity" data-dosage-entity-id="drug-1" data-substance-id="sub-1"></span></div>',
       );
     });
   });

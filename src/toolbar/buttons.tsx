@@ -5,7 +5,7 @@ import OrderedListIcon from './icons/OrderedListIcon';
 import UnorderedListIcon from './icons/UnorderedListIcon';
 
 const PHRASE_SEL = '[data-content-type="phrasionary"]';
-const NGDE_SEL = '[data-content-type="ngde"]';
+const NGDE_SEL = '[data-type="dosageEntity"]';
 
 function asElement(n?: Node | null) {
   return n instanceof Element ? n : (n?.parentElement ?? null);
@@ -229,16 +229,16 @@ export const BtnPhrasionary = createButton(
 );
 
 export const BtnNgde = createButton(
-  'NGDE',
+  'Dosage',
   '💊',
   ({ $el, $selection }) => {
     if (!$el) return;
 
-    // 1) caret inside an existing NGDE → unwrap (toggle off)
+    // 1) caret inside an existing dosage entity → remove it
     const selEl = asElement($selection);
     const host = selEl?.closest(NGDE_SEL) as HTMLElement | null;
     if (host && $el.contains(host)) {
-      unwrap(host);
+      host.remove();
       $el.focus();
       return;
     }
@@ -247,34 +247,28 @@ export const BtnNgde = createButton(
     if (!sel || sel.rangeCount === 0) return;
     const range = sel.getRangeAt(0);
 
-    // 2) if selection intersects any NGDE spans → unwrap them
+    // 2) if selection intersects any dosage entity spans → remove them
     const hits = ngdeSpansInRange($el, range);
     if (hits.length) {
       hits.sort((a, b) => (a.contains(b) ? 1 : b.contains(a) ? -1 : 0));
-      hits.forEach(unwrap);
+      hits.forEach((el) => el.remove());
       $el.focus();
       return;
     }
 
-    // 3) if selection spans multiple blocks → do nothing
-    if (!range.collapsed) {
-      const ancestor = range.commonAncestorContainer;
-      if (ancestor && asElement(ancestor)?.querySelector('li,p,div')) {
-        alert('NGDE entries cannot span multiple blocks.');
-        return;
-      }
-    }
+    // 3) Insert dosage entity inline at caret position
+    const entityId = prompt('Dosage Entity ID', '');
+    if (!entityId) return;
 
-    // 4) single-block selection → inline wrap
-    const text = range.toString();
-    if (!text.trim()) return alert('Please select some text first');
-    const eid = prompt('NGDE EID', '');
-    if (!eid) return;
+    const substanceId = prompt('Substance ID (optional)', '');
 
     const span = document.createElement('span');
-    span.setAttribute('data-content-type', 'ngde');
-    span.setAttribute('data-content-eid', eid);
-    span.textContent = text;
+    span.setAttribute('data-type', 'dosageEntity');
+    span.setAttribute('data-dosage-entity-id', entityId);
+    if (substanceId) {
+      span.setAttribute('data-substance-id', substanceId);
+    }
+    // Dosage entities are inline badges with no text content
 
     range.deleteContents();
     range.insertNode(span);

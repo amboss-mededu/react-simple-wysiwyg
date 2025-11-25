@@ -240,23 +240,25 @@ function buildInlineFromNodes(
       continue;
     }
 
-    // NGDE: <span data-content-type="ngde" data-content-eid="...">...</span>
+    // NGDE (Dosage Entity): <span data-type="dosageEntity" data-dosage-entity-id="...">...</span>
     if (
       tag === 'span' &&
       (node as HTMLElement).dataset &&
-      (node as HTMLElement).dataset.contentType === 'ngde' &&
-      (node as HTMLElement).dataset.contentEid
+      (node as HTMLElement).dataset.type === 'dosageEntity' &&
+      (node as HTMLElement).dataset.dosageEntityId
     ) {
       // close any pending text BEFORE inserting a structured token
       flushText();
 
-      const eid = (node as HTMLElement).dataset.contentEid!;
-      // Preserve allowed inline formatting (b, i, sub, sup)
-      const value = Array.from(node.childNodes)
-        .map(serializeAllowedInline)
-        .join('');
+      const entityId = (node as HTMLElement).dataset.dosageEntityId!;
+      const substanceId = (node as HTMLElement).dataset.substanceId;
+      // Dosage entities are inline badges, no text value extracted
 
-      out.push({ type: 'ngde', eid, value });
+      out.push({
+        type: 'ngde',
+        entityId,
+        ...(substanceId ? { substanceId } : {}),
+      });
       continue;
     }
 
@@ -309,11 +311,11 @@ function findPhrasionarySpans(element: Element): Element[] {
     return spans;
   }
 
-  // Check if this element itself is an NGDE span
+  // Check if this element itself is an NGDE (dosage entity) span
   if (
     element.tagName.toLowerCase() === 'span' &&
-    (element as HTMLElement).dataset?.contentType === 'ngde' &&
-    (element as HTMLElement).dataset?.contentEid
+    (element as HTMLElement).dataset?.type === 'dosageEntity' &&
+    (element as HTMLElement).dataset?.dosageEntityId
   ) {
     spans.push(element);
     return spans;
@@ -378,21 +380,23 @@ function parseElementWithPhrasionary(
       continue;
     }
 
-    // Check if this is an NGDE span
+    // Check if this is an NGDE (dosage entity) span
     if (
       tag === 'span' &&
-      (node as HTMLElement).dataset?.contentType === 'ngde' &&
-      (node as HTMLElement).dataset?.contentEid
+      (node as HTMLElement).dataset?.type === 'dosageEntity' &&
+      (node as HTMLElement).dataset?.dosageEntityId
     ) {
       // Flush any pending text
       flushText();
 
-      const eid = (node as HTMLElement).dataset.contentEid!;
-      // Preserve allowed inline formatting (b, i, sub, sup)
-      const value = Array.from(node.childNodes)
-        .map(serializeAllowedInline)
-        .join('');
-      out.push({ type: 'ngde', eid, value });
+      const entityId = (node as HTMLElement).dataset.dosageEntityId!;
+      const substanceId = (node as HTMLElement).dataset.substanceId;
+      // Dosage entities are inline badges, no text value extracted
+      out.push({
+        type: 'ngde',
+        entityId,
+        ...(substanceId ? { substanceId } : {}),
+      });
       continue;
     }
 

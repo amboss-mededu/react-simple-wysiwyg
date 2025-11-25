@@ -44,8 +44,11 @@ function renderInlineContent(inline: InlineContent): string {
       // Render phrasionary entries as spans
       html += `<span data-content-type="phrasionary" data-content-id="${content.id}">${content.value}</span>`;
     } else if (content.type === 'ngde') {
-      // Render NGDE entries as spans
-      html += `<span data-content-type="ngde" data-content-eid="${content.eid}">${content.value}</span>`;
+      // Render dosage entity as inline span (no text content)
+      const substanceAttr = content.substanceId
+        ? ` data-substance-id="${content.substanceId}"`
+        : '';
+      html += `<span data-type="dosageEntity" data-dosage-entity-id="${content.entityId}"${substanceAttr}></span>`;
     }
   }
   return html;

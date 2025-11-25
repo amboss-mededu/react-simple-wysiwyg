@@ -13,10 +13,10 @@ export type PhrasionaryContent = {
 
 export type NgdeContent = {
   type: 'ngde';
-  /* EID of the Next Generation Drug Entity */
-  eid: string;
-  /* Text content of the NGDE entry */
-  value: string;
+  /* Entity ID of the dosage entity (can be objectId or numeric id) */
+  entityId: string;
+  /* Optional substance ID (can be objectId or numeric id) */
+  substanceId?: string;
 };
 
 export type InlineContent = {
