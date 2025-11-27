@@ -82,43 +82,20 @@
   list-style-type: lower-roman;
 }
 
-/* Entity tooltip styles */
-.rsw-ce .phrasionary-entity,
-.rsw-ce .dosage-entity {
-  cursor: help;
-  position: relative;
-}
-
-.rsw-ce .phrasionary-entity:hover::after,
-.rsw-ce .dosage-entity:hover::after {
-  content: attr(title);
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #333;
-  color: #fff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  white-space: nowrap;
-  z-index: 1000;
-  pointer-events: none;
-  margin-bottom: 4px;
-}
-
 /* Phrasionary link styles */
 .rsw-ce .phrasionary-entity {
   color: #2c5aa0;
   text-decoration: underline;
+  cursor: help;
 }
 
 /* Dosage entity (NGDE) styles - inline badge with emoji icon */
 .rsw-ce .dosage-entity {
-  display: inline-block;
-  font-size: 0.85em;
-  margin: 0 4px;
+  color: #2c5aa0;
+  font-size: 0.8em;
+  text-decoration: underline;
   vertical-align: baseline;
+  cursor: help;
 }
 
 .rsw-html {
