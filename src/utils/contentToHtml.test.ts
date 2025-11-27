@@ -365,7 +365,7 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        '<div><span data-content-type="phrasionary" data-content-id="123">medical term</span></div>',
+        '<div><span data-content-type="phrasionary" data-content-id="123" class="phrasionary-entity" title="Phrasionary: 123">medical term</span></div>',
       );
     });
 
@@ -405,7 +405,7 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        '<div>Regular text</div><div><span data-content-type="phrasionary" data-content-id="456">term</span></div><div>More text</div>',
+        '<div>Regular text</div><div><span data-content-type="phrasionary" data-content-id="456" class="phrasionary-entity" title="Phrasionary: 456">term</span></div><div>More text</div>',
       );
     });
 
@@ -435,7 +435,7 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        '<div>Regular text <span data-content-type="phrasionary" data-content-id="456">term</span> with more text</div>',
+        '<div>Regular text <span data-content-type="phrasionary" data-content-id="456" class="phrasionary-entity" title="Phrasionary: 456">term</span> with more text</div>',
       );
     });
 
@@ -473,7 +473,7 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        '<div><ul><li>Text with <span data-content-type="phrasionary" data-content-id="789">inline term</span> here</li></ul></div>',
+        '<div><ul><li>Text with <span data-content-type="phrasionary" data-content-id="789" class="phrasionary-entity" title="Phrasionary: 789">inline term</span> here</li></ul></div>',
       );
     });
 
@@ -512,7 +512,7 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        '<div><ul><li><span data-content-type="phrasionary" data-content-id="111">first term</span> and <span data-content-type="phrasionary" data-content-id="222">second term</span></li></ul></div>',
+        '<div><ul><li><span data-content-type="phrasionary" data-content-id="111" class="phrasionary-entity" title="Phrasionary: 111">first term</span> and <span data-content-type="phrasionary" data-content-id="222" class="phrasionary-entity" title="Phrasionary: 222">second term</span></li></ul></div>',
       );
     });
 
@@ -546,7 +546,7 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        '<div><ul><li>Item with <span data-content-type="phrasionary" data-content-id="333"><b>bold</b> term</span></li></ul></div>',
+        '<div><ul><li>Item with <span data-content-type="phrasionary" data-content-id="333" class="phrasionary-entity" title="Phrasionary: 333"><b>bold</b> term</span></li></ul></div>',
       );
     });
 
@@ -576,7 +576,7 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        '<div>Text<span data-content-type="phrasionary" data-content-id="456">term</span>   more text</div>',
+        '<div>Text<span data-content-type="phrasionary" data-content-id="456" class="phrasionary-entity" title="Phrasionary: 456">term</span>   more text</div>',
       );
     });
 
@@ -774,7 +774,7 @@ describe('contentToHtml', () => {
       };
 
       expect(contentToHtml(content)).toBe(
-        `<div><span data-content-type="phrasionary" data-content-id="term-1">medical term</span> treated with ${dosageEntityHtml('drug-1', 'sub-1')}</div>`,
+        `<div><span data-content-type="phrasionary" data-content-id="term-1" class="phrasionary-entity" title="Phrasionary: term-1">medical term</span> treated with ${dosageEntityHtml('drug-1', 'sub-1')}</div>`,
       );
     });
   });
