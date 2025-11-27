@@ -218,6 +218,8 @@ export const BtnPhrasionary = createButton(
     const span = document.createElement('span');
     span.setAttribute('data-content-type', 'phrasionary');
     span.setAttribute('data-content-id', id);
+    span.setAttribute('class', 'phrasionary-entity');
+    span.setAttribute('title', `Phrasionary: ${id}`);
     span.textContent = text;
 
     range.deleteContents();

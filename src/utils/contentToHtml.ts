@@ -42,7 +42,7 @@ function renderInlineContent(inline: InlineContent): string {
       html += content.value;
     } else if (content.type === 'phrasionary') {
       // Render phrasionary entries as spans
-      html += `<span data-content-type="phrasionary" data-content-id="${content.id}">${content.value}</span>`;
+      html += `<span data-content-type="phrasionary" data-content-id="${content.id}" class="phrasionary-entity" title="Phrasionary: ${content.id}">${content.value}</span>`;
     } else if (content.type === 'ngde') {
       // Render dosage entity as inline badge with emoji icon
       const substanceAttr = content.substanceId

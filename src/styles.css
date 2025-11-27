@@ -83,17 +83,19 @@
 }
 
 /* Phrasionary link styles */
-.rsw-ce span[data-content-type='phrasionary'] {
+.rsw-ce .phrasionary-entity {
   color: #2c5aa0;
   text-decoration: underline;
+  cursor: help;
 }
 
 /* Dosage entity (NGDE) styles - inline badge with emoji icon */
-.rsw-ce span.dosage-entity {
-  display: inline-block;
-  font-size: 0.85em;
-  margin: 0 4px;
+.rsw-ce .dosage-entity {
+  color: #2c5aa0;
+  font-size: 0.8em;
+  text-decoration: underline;
   vertical-align: baseline;
+  cursor: help;
 }
 
 .rsw-html {
