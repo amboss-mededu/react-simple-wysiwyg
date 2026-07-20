@@ -294,6 +294,31 @@ describe('contentToHtml', () => {
     );
   });
 
+  test('handles list item missing content property', () => {
+    const content = {
+      type: 'root',
+      children: [
+        {
+          type: 'unordered-list',
+          items: [
+            { type: 'list-item' },
+            {
+              type: 'list-item',
+              content: {
+                type: 'inline',
+                content: [{ type: 'text', value: 'Valid item' }],
+              },
+            },
+          ],
+        },
+      ],
+    } as unknown as ContentRoot;
+
+    expect(contentToHtml(content)).toBe(
+      '<div><ul><li></li><li>Valid item</li></ul></div>',
+    );
+  });
+
   test('handles empty lists', () => {
     const content: ContentRoot = {
       type: 'root',
