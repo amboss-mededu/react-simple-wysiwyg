@@ -48,9 +48,7 @@ export type OrderedListContent = {
  * Avoid using TextContent directly; use InlineContent for content.
  */
 export type ContentBlock =
-  | UnorderedListContent
-  | OrderedListContent
-  | InlineContent;
+  UnorderedListContent | OrderedListContent | InlineContent;
 
 export type ContentRoot = {
   type: 'root';
