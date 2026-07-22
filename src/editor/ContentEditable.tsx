@@ -241,7 +241,10 @@ export type ContentEditableEvent = SyntheticEvent<any, Event> & {
   target: { name?: string; value: string; structured?: ContentRoot };
 };
 
-export interface ContentEditableProps extends HTMLAttributes<HTMLElement> {
+export interface ContentEditableProps extends Omit<
+  HTMLAttributes<HTMLElement>,
+  'onChange'
+> {
   disabled?: boolean;
   name?: string;
   onChange?: (event: ContentEditableEvent) => void;

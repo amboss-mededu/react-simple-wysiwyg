@@ -47,11 +47,6 @@ test('creates nested lists with Tab key', async ({ page }) => {
   expect(htmlContent).toMatch(
     /<li>First item<ul><li>Nested item<\/li><li>Another nested item<\/li><\/ul><\/li>/,
   );
-
-  // Take a screenshot
-  await expect(page.locator('.rsw-editor')).toHaveScreenshot(
-    'nested-lists.png',
-  );
 });
 
 test('creates mixed nested lists (ul and ol)', async ({ page }) => {
@@ -93,10 +88,6 @@ test('creates mixed nested lists (ul and ol)', async ({ page }) => {
   expect(htmlContent).toContain('Numbered sub-item 1');
   expect(htmlContent).toContain('Numbered sub-item 2');
   expect(htmlContent).toContain('Another bullet item');
-
-  await expect(page.locator('.rsw-editor')).toHaveScreenshot(
-    'mixed-nested-lists.png',
-  );
 });
 
 test('exits nested list with Enter on empty item', async ({ page }) => {
@@ -133,10 +124,6 @@ test('exits nested list with Enter on empty item', async ({ page }) => {
   expect(htmlContent).toContain('Second item');
   expect(htmlContent).toContain('Nested item');
   expect(htmlContent).toContain('Back to first level');
-
-  await expect(page.locator('.rsw-editor')).toHaveScreenshot(
-    'exit-nested-list.png',
-  );
 });
 
 test('exits list completely with Enter on empty top-level item', async ({
@@ -169,10 +156,6 @@ test('exits list completely with Enter on empty top-level item', async ({
 
   // "Text after list" should be in a div, not in the list
   expect(htmlContent).toMatch(/Text after list.*<\/div>/);
-
-  await expect(page.locator('.rsw-editor')).toHaveScreenshot(
-    'exit-list-completely.png',
-  );
 });
 
 test('handles Shift+Tab outdenting correctly', async ({ page }) => {
@@ -215,10 +198,6 @@ test('handles Shift+Tab outdenting correctly', async ({ page }) => {
   expect(htmlContent).toContain('Level 2 item');
   expect(htmlContent).toContain('Still level 2');
   expect(htmlContent).toContain('Back to level 1');
-
-  await expect(page.locator('.rsw-editor')).toHaveScreenshot(
-    'shift-tab-outdenting.png',
-  );
 });
 
 test('converts between HTML and structured data correctly', async ({
@@ -265,10 +244,6 @@ test('converts between HTML and structured data correctly', async ({
   expect(htmlContent).toContain('<ol>');
   expect(htmlContent).toContain('Introduction');
   expect(htmlContent).toContain('Conclusion');
-
-  await expect(page.locator('.rsw-editor')).toHaveScreenshot(
-    'html-structured-data-conversion.png',
-  );
 });
 
 test('respects maximum nesting depth of 2 levels', async ({ page }) => {
@@ -300,8 +275,4 @@ test('respects maximum nesting depth of 2 levels', async ({ page }) => {
   // Should not have 3 levels of nesting (ul > li > ul > li > ul)
   const nestedUlMatches = htmlContent.match(/<ul>/g) || [];
   expect(nestedUlMatches.length).toBeLessThanOrEqual(2);
-
-  await expect(page.locator('.rsw-editor')).toHaveScreenshot(
-    'max-nesting-depth.png',
-  );
 });

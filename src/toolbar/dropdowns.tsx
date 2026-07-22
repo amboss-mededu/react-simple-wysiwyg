@@ -83,8 +83,7 @@ export type DropDownItem = [
   string,
 ];
 
-export interface DropDownFactoryProps
-  extends HTMLAttributes<HTMLSelectElement> {
+export interface DropDownFactoryProps extends HTMLAttributes<HTMLSelectElement> {
   selected?: number;
 }
 

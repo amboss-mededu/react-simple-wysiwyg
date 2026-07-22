@@ -78,8 +78,7 @@ export function indentListItem(listItem: HTMLLIElement): boolean {
 
   const prevSibling = listItem.previousElementSibling as HTMLLIElement;
   const parentList = listItem.parentElement as
-    | HTMLUListElement
-    | HTMLOListElement;
+    HTMLUListElement | HTMLOListElement;
   const listType = parentList.tagName;
 
   // Check if previous sibling already has a nested list
@@ -88,8 +87,7 @@ export function indentListItem(listItem: HTMLLIElement): boolean {
   if (!nestedList) {
     // Create a new nested list
     nestedList = document.createElement(listType.toLowerCase()) as
-      | HTMLUListElement
-      | HTMLOListElement;
+      HTMLUListElement | HTMLOListElement;
     prevSibling.appendChild(nestedList);
   }
 
@@ -115,12 +113,10 @@ export function outdentListItem(listItem: HTMLLIElement): boolean {
   if (!canOutdent(listItem)) return false;
 
   const parentList = listItem.parentElement as
-    | HTMLUListElement
-    | HTMLOListElement;
+    HTMLUListElement | HTMLOListElement;
   const grandParentLI = parentList.parentElement as HTMLLIElement;
   const greatGrandParentList = grandParentLI.parentElement as
-    | HTMLUListElement
-    | HTMLOListElement;
+    HTMLUListElement | HTMLOListElement;
 
   // Move the item after its grand-parent LI
   greatGrandParentList.insertBefore(listItem, grandParentLI.nextSibling);

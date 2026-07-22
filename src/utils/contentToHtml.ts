@@ -60,7 +60,9 @@ function renderInlineContent(inline: InlineContent): string {
 // Helper function to render a list item with potential nested content
 function renderListItem(item: ListItem): string {
   let html = `<li>`;
-  html += renderInlineContent(item.content);
+  if (item.content) {
+    html += renderInlineContent(item.content);
+  }
 
   // Add any nested lists
   if (item.children && item.children.length > 0) {
