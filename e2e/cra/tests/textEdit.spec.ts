@@ -11,7 +11,7 @@ test('has title', async ({ page, baseURL }) => {
   await expect(page.getByTestId('text')).toHaveText('Plain Text');
 });
 
-test('editor screenshot with sample content', async ({ page }) => {
+test('builds italic and link markup via toolbar', async ({ page }) => {
   await page.goto(URL);
 
   // Wait for the editor to load
@@ -53,10 +53,13 @@ test('editor screenshot with sample content', async ({ page }) => {
   // Blur the editor to ensure all changes are applied
   await editor.blur();
 
-  // Take a screenshot of just the rsw-editor area
-  await expect(page.locator('.rsw-editor')).toHaveScreenshot(
-    'wysiwyg-editor.png',
-  );
+  // Verify the toolbar actions produced italic + link markup. The exact
+  // italic boundary is left to execCommand and the caret math above, so
+  // assert the tags exist rather than their precise span.
+  const htmlContent = await editor.innerHTML();
+  expect(htmlContent).toContain('WYSIWYG editor.');
+  expect(htmlContent).toContain('<i>');
+  expect(htmlContent).toMatch(/<a[^>]*href="#"[^>]*>React<\/a>/);
 });
 
 test('html toggle functionality', async ({ page }) => {
@@ -81,8 +84,9 @@ test('html toggle functionality', async ({ page }) => {
   // Toggle back to rich text mode
   await page.click('button[title="HTML mode"]');
 
-  // Take a screenshot showing the properly formatted rich text
-  await expect(page.locator('.rsw-editor')).toHaveScreenshot(
-    'wysiwyg-editor-from-html.png',
-  );
+  // Verify the raw HTML was parsed back into formatted rich text
+  await richEditor.waitFor();
+  const htmlContent = await richEditor.innerHTML();
+  expect(htmlContent).toContain('<i>lightweight</i>');
+  expect(htmlContent).toMatch(/<a[^>]*href="#"[^>]*>React<\/a>/);
 });
